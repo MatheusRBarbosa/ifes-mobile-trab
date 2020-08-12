@@ -39,4 +39,12 @@ public class Post {
         }
         return 0;
     }
+
+    public int getCommentsSize(){
+        return this.comments.size();
+    }
+
+    public Comment getLastComment() {
+        return this.comments.get(this.comments.size()-1);
+    }
 }

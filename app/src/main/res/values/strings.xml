@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Quase Instagram</string>
+    <string name="btn_comments">Ver todos %1$d comentários</string>
 </resources>

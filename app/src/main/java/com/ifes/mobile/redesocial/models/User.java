@@ -1,8 +1,5 @@
 package com.ifes.mobile.redesocial.models;
 
-import android.graphics.Bitmap;
-
-import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

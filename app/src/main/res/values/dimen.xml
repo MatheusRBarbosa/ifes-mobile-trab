@@ -6,8 +6,8 @@
     <dimen name="user_following_photo_h">90dp</dimen>
     <dimen name="user_following_photo_w">90dp</dimen>
 
-    <dimen name="post_photo_h">200dp</dimen>
-    <dimen name="post_photo_w">200dp</dimen>
+    <dimen name="post_photo_h">400dp</dimen>
+    <dimen name="post_photo_w">400dp</dimen>
 
     <dimen name="add_comment_btn_h">30dp</dimen>
     <dimen name="add_comment_btn_w">30dp</dimen>

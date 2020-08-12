@@ -77,8 +77,7 @@ public class PostAdapter extends RecyclerView.Adapter {
 
         // Loading last comment
         TextView tvLastComment = holder.itemView.findViewById(R.id.last_comment);
-        Comment comment = post.comments.get(post.comments.size()-1);
-        // TODO: Criar metodo dentro da classe de Comment que pega o ultimo comentario
+        Comment comment = post.getLastComment();
         String lastCommentText = comment.text;
         User lastCommentUser = comment.user;
         String lastComment = lastCommentUser.name + ": " + lastCommentText;
@@ -101,6 +100,8 @@ public class PostAdapter extends RecyclerView.Adapter {
 
         // Loading Comments button
         Button btnComments = (Button) holder.itemView.findViewById(R.id.btn_comments);
+        String btnText = String.format(holder.itemView.getResources().getString(R.string.btn_comments), post.getCommentsSize());
+        btnComments.setText(btnText);
         btnComments.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
