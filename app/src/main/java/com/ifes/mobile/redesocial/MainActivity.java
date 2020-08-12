@@ -1,6 +1,7 @@
 package com.ifes.mobile.redesocial;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -67,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
 
         // Setting up bottom menu
         this.bottomNavigationView = findViewById(R.id.menu_bottom);
+
+        //this.bottomNavigationView.setSelectedItemId(R.id.op_everybody); //TODO: BUG - Isso deveria fazer com que quando
+                                                                          //TODO: voltasse da tela de login o app nao fechasse, abrisse na aba geral
         this.bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -77,6 +81,7 @@ public class MainActivity extends AppCompatActivity {
                                 filteredPosts.addAll(posts);
                                 break;
                             case R.id.op_my_world:
+                                sessionManager.checkLogin();
                                 List<User> following = user.getFollowing();
                                 for(Post post: posts) {
                                     for(User follow: following) {
@@ -87,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
                                 }
                                 break;
                             case R.id.op_me:
+                                sessionManager.checkLogin();
                                 for(Post post: posts) {
                                     if(post.user.id == user.id) {
                                         filteredPosts.add(post);
@@ -114,10 +120,14 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.op_friends:
                 Intent i = new Intent(MainActivity.this, FollowingActivity.class);
-                i.putExtra("userId", this.user.id);
                 startActivity(i);
                 return true;
             case R.id.op_new_post:
+                return true;
+            case R.id.op_gallery:
+                return true;
+            case R.id.op_logout:
+                this.sessionManager.logout();
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

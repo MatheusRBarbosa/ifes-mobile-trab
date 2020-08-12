@@ -16,16 +16,25 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ifes.mobile.redesocial.Utils.MarginItemDecoration;
 import com.ifes.mobile.redesocial.models.User;
 import com.ifes.mobile.redesocial.services.Mock;
+import com.ifes.mobile.redesocial.services.SessionManager;
 import com.ifes.mobile.redesocial.ui.following.FollowingAdapter;
+
+import java.util.HashMap;
 
 public class FollowingActivity extends AppCompatActivity {
 
     private int userId;
+    SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_following);
+
+        sessionManager = new SessionManager(FollowingActivity.this);
+        sessionManager.checkLogin();
+
+        final HashMap<String, String> loggedUser = sessionManager.getUserDetail();
 
         // Setting up action bar
         Toolbar toolbar = findViewById(R.id.menu_top);
@@ -37,7 +46,7 @@ public class FollowingActivity extends AppCompatActivity {
 
         //Setting up adapter
         Intent i = getIntent();
-        this.userId = i.getIntExtra("userId", 0);
+        this.userId = Integer.parseInt(loggedUser.get("ID"));
         User user = Mock.getUser(this.userId); //TODO: Pegar da API
         FollowingAdapter followingAdapter = new FollowingAdapter(this, user.following);
 

@@ -1,8 +1,11 @@
 package com.ifes.mobile.redesocial.services;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+
+import androidx.core.app.ActivityCompat;
 
 import com.ifes.mobile.redesocial.LoginActivity;
 import com.ifes.mobile.redesocial.MainActivity;
@@ -47,7 +50,8 @@ public class SessionManager {
         if (!this.isLoggin()){
             Intent i = new Intent(context, LoginActivity.class);
             context.startActivity(i);
-            ((MainActivity) context).finish();
+            Activity activity = (Activity) context;
+            activity.finish();
         }
     }
 
@@ -67,7 +71,8 @@ public class SessionManager {
         editor.commit();
         Intent i = new Intent(context, LoginActivity.class);
         context.startActivity(i);
-        ((MainActivity) context).finish();
+        Activity activity = (Activity) context;
+        activity.finish();
 
     }
 

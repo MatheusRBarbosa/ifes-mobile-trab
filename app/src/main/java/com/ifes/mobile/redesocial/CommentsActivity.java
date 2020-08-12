@@ -2,13 +2,9 @@ package com.ifes.mobile.redesocial;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
@@ -20,16 +16,21 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.ifes.mobile.redesocial.Utils.MarginItemDecoration;
 import com.ifes.mobile.redesocial.models.Comment;
 import com.ifes.mobile.redesocial.services.Mock;
+import com.ifes.mobile.redesocial.services.SessionManager;
 import com.ifes.mobile.redesocial.ui.comments.CommentsAdapter;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CommentsActivity extends AppCompatActivity {
+
+    SessionManager sessionManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
+
+        sessionManager = new SessionManager(CommentsActivity.this);
 
         // Setting up top menu
         Toolbar toolbar = findViewById(R.id.menu_top);
@@ -54,7 +55,14 @@ public class CommentsActivity extends AppCompatActivity {
 
         // Setting up send_comment
         final EditText etComment = findViewById(R.id.send_comment);
-        Button btnSendComment = (Button) findViewById(R.id.btn_send_comment);
+        Button btnSendComment = findViewById(R.id.btn_send_comment);
+
+        if(!sessionManager.isLoggin()){
+            btnSendComment.setEnabled(false);
+            etComment.setEnabled(false);
+            etComment.setText(R.string.loggin_needed);
+        }
+
         btnSendComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

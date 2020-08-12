@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Quase Instagram</string>
     <string name="btn_comments">Ver todos %1$d comentários</string>
+    <string name="loggin_needed">Você precisa estar logado para fazer isso</string>
 </resources>

@@ -12,4 +12,10 @@
         android:icon="@drawable/ic_new_post"
         android:title="Criar Post"
         app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/op_gallery"
+        android:title="Suas imagens" />
+    <item
+        android:id="@+id/op_logout"
+        android:title="Sair" />
 </menu>
