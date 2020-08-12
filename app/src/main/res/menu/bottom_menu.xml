@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/op_everybody"
+        android:icon="@drawable/ic_everybody"
+        android:title="Todo Mundo"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/op_my_world"
+        android:icon="@drawable/ic_my_world"
+        android:title="Meu mundo"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/op_me"
+        android:icon="@drawable/ic_me"
+        android:title="Só meu"
+        app:showAsAction="ifRoom" />
+</menu>
