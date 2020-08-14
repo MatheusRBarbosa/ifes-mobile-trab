@@ -47,13 +47,21 @@ public class LoginActivity extends AppCompatActivity {
         EditText password = findViewById(R.id.password);
 
         Button btnLogin = findViewById(R.id.btn_login);
-
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //TODO: enviar username e senha, receber user da API
                 sessionManager.createSession(mockUser.id, mockUser.name, mockUser.getEmail());
                 Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                startActivity(i);
+            }
+        });
+
+        Button btnSignup = findViewById(R.id.btn_signup);
+        btnSignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getApplicationContext(), SignupActivity.class);
                 startActivity(i);
             }
         });

@@ -2,7 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.ifes.mobile.redesocial">
 
+    <uses-feature android:name="android.hardware.cammera" android:required="true"/>
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +29,17 @@
         <activity android:name=".CommentsActivity" android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".FollowingActivity" android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".FindUsersActivity" android:parentActivityName=".FollowingActivity"></activity>
+        <activity android:name=".SignupActivity" android:parentActivityName=".LoginActivity"></activity>
+
+        <provider
+            android:authorities="com.ifes.mobile.redesocial.fileprovider"
+            android:name="androidx.core.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths">
+            </meta-data>
+        </provider>
     </application>
 
 </manifest>

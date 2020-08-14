@@ -5,10 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import androidx.core.app.ActivityCompat;
-
 import com.ifes.mobile.redesocial.LoginActivity;
-import com.ifes.mobile.redesocial.MainActivity;
 
 import java.util.HashMap;
 
