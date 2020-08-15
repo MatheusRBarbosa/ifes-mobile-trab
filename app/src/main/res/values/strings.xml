@@ -3,4 +3,8 @@
     <string name="btn_comments">Ver todos %1$d comentários</string>
     <string name="loggin_needed">Você precisa estar logado para fazer isso</string>
     <string name="signup">Não é cadastrado? Cadastre agora!</string>
+
+    <string name="required_field">Este campo é obrigatório!</string>
+    <string name="image_required">É necessário atribuir uma imagem</string>
+    <string name="date_size_field">A data deve ser DD/MM/YYYY !</string>
 </resources>
