@@ -19,4 +19,6 @@
 
     <dimen name="btn_icon">50dp</dimen>
     <dimen name="input_image_preview">200dp</dimen>
+
+    <dimen name="gallery_item">150dp</dimen>
 </resources>

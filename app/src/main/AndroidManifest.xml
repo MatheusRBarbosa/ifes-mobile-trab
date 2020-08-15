@@ -28,6 +28,9 @@
         <activity android:name=".LoginActivity" android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".CommentsActivity" android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".FollowingActivity" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".NewTextPostActivity" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".NewImagePostActivity" android:parentActivityName=".MainActivity"></activity>
+        <activity android:name=".GalleryActivity" android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".FindUsersActivity" android:parentActivityName=".FollowingActivity"></activity>
         <activity android:name=".SignupActivity" android:parentActivityName=".LoginActivity"></activity>
 

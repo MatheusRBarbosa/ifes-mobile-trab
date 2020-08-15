@@ -12,14 +12,16 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.ifes.mobile.redesocial.Utils.FieldValidator;
 import com.ifes.mobile.redesocial.models.User;
 import com.ifes.mobile.redesocial.services.SessionManager;
 
-import java.util.Date;
+import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
     SessionManager sessionManager;
+    ArrayList<EditText> form = new ArrayList<>();
     User mockUser = new User(
             1,
             "Matheus",
@@ -44,16 +46,20 @@ public class LoginActivity extends AppCompatActivity {
         mockUser.setEmail("matheuskleber@live.com");
 
         EditText username = findViewById(R.id.username);
+        this.form.add(username);
         EditText password = findViewById(R.id.password);
+        this.form.add(password);
 
         Button btnLogin = findViewById(R.id.btn_login);
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: enviar username e senha, receber user da API
-                sessionManager.createSession(mockUser.id, mockUser.name, mockUser.getEmail());
-                Intent i = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(i);
+                if(FieldValidator.validateForm(LoginActivity.this, form)) {
+                    //TODO: enviar username e senha, receber user da API
+                    sessionManager.createSession(mockUser.id, mockUser.name, mockUser.getEmail());
+                    Intent i = new Intent(getApplicationContext(), MainActivity.class);
+                    startActivity(i);
+                }
             }
         });
 

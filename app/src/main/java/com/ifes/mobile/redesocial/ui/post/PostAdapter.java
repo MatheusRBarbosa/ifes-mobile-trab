@@ -18,6 +18,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.ifes.mobile.redesocial.CommentsActivity;
 import com.ifes.mobile.redesocial.MainActivity;
 import com.ifes.mobile.redesocial.R;
+import com.ifes.mobile.redesocial.Utils.Const;
 import com.ifes.mobile.redesocial.models.Comment;
 import com.ifes.mobile.redesocial.models.Post;
 import com.ifes.mobile.redesocial.models.User;
@@ -28,9 +29,6 @@ import java.util.List;
 public class PostAdapter extends RecyclerView.Adapter {
     private MainActivity mainActivity;
     private List<Post> posts;
-
-    final int POST_TEXT_TYPE = 1;
-    final int POST_PHOTO_TYPE = 2;
 
     public PostAdapter(MainActivity mainActivity, List<Post> posts){
         this.posts = posts;
@@ -43,10 +41,10 @@ public class PostAdapter extends RecyclerView.Adapter {
         LayoutInflater layoutInflater = LayoutInflater.from(mainActivity);
         View view = null;
 
-        if(viewType == this.POST_TEXT_TYPE){
+        if(viewType == Const.POST_TEXT_TYPE){
             view = layoutInflater.inflate(R.layout.post_text_item, parent, false);
         }
-        else if(viewType == this.POST_PHOTO_TYPE){
+        else if(viewType == Const.POST_PHOTO_TYPE){
             view = layoutInflater.inflate(R.layout.post_image_item, parent, false);
         }
         return new PostViewHolder(view);
@@ -84,13 +82,13 @@ public class PostAdapter extends RecyclerView.Adapter {
         tvLastComment.setText(lastComment);
 
         // If text post, load it
-        if(this.getItemViewType(position) == this.POST_TEXT_TYPE){
+        if(this.getItemViewType(position) == Const.POST_TEXT_TYPE){
             TextView tvPostText = holder.itemView.findViewById(R.id.post_text);
             tvPostText.setText(post.postText.textContent);
         }
 
         // If image post, load it
-        else if(this.getItemViewType(position) == this.POST_PHOTO_TYPE){
+        else if(this.getItemViewType(position) == Const.POST_PHOTO_TYPE){
             ImageView ivPost = holder.itemView.findViewById(R.id.post_photo);
             Glide.with(holder.itemView.getContext()).load(post.postImage.imageUrl).apply(glideOptions).into(ivPost);
 

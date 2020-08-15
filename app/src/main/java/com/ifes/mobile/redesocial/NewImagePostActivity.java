@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,26 +19,29 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.ifes.mobile.redesocial.Utils.Const;
 import com.ifes.mobile.redesocial.Utils.Dialog;
 import com.ifes.mobile.redesocial.Utils.FieldValidator;
-import com.ifes.mobile.redesocial.Utils.Mask;
-import com.ifes.mobile.redesocial.Utils.Const;
 import com.ifes.mobile.redesocial.services.ImageProvider;
+import com.ifes.mobile.redesocial.services.SessionManager;
 
 import java.io.File;
-import java.util.ArrayList;
 
-public class SignupActivity extends AppCompatActivity {
+public class NewImagePostActivity extends AppCompatActivity {
 
     private ImageProvider imageProvider;
+    SessionManager sessionManager;
     private Dialog dialog;
     private String photo;
-    private ArrayList<EditText> form = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signup);
+
+        sessionManager = new SessionManager(NewImagePostActivity.this);
+        sessionManager.checkLogin();
+
+        setContentView(R.layout.activity_new_image_post);
 
         this.imageProvider = new ImageProvider(this);
         this.dialog = new Dialog(this, this.imageProvider);
@@ -49,17 +51,12 @@ public class SignupActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
-        actionBar.setTitle("Cadastrar");
+        actionBar.setTitle("Novo post de texto");
         actionBar.setDisplayHomeAsUpEnabled(true);
 
-        // Mask date
-        final EditText etBrithDate = findViewById(R.id.input_date);
-        form.add(etBrithDate);
-        etBrithDate.addTextChangedListener(Mask.mask(etBrithDate, Mask.FORMAT_DATE));
-
-        // Setting up photo preview
-        ImageButton btnImagePicker = findViewById(R.id.btn_image_picker);
-        btnImagePicker.setOnClickListener(new View.OnClickListener() {
+        // Setting up image view
+        ImageButton btnUpload = findViewById(R.id.btn_upload_photo);
+        btnUpload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 AlertDialog alertDialog = dialog.createGalleryDialog();
@@ -67,46 +64,20 @@ public class SignupActivity extends AppCompatActivity {
             }
         });
 
-        // On submit
-        Button btnSignup = findViewById(R.id.btn_signup);
-        btnSignup.setOnClickListener(new View.OnClickListener() {
+        // Setting up send button
+        Button btnSend = findViewById(R.id.btn_send);
+        btnSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                EditText etPassword = findViewById(R.id.input_password);
-                form.add(etPassword);
-                String password = etPassword.getText().toString();
+                EditText etTitle = findViewById(R.id.input_title);
+                ImageView ivPhoto = findViewById(R.id.photo);
+                if(FieldValidator.validateField(NewImagePostActivity.this, etTitle)
+                        && FieldValidator.validateImage(NewImagePostActivity.this, ivPhoto))
+                {
+                    String photoTitle = etTitle.getText().toString();
 
-                EditText etConfirmPassword = findViewById(R.id.input_password_confirm);
-                form.add(etConfirmPassword);
-                String confirmPassword = etConfirmPassword.getText().toString();
-
-                if(password.equals(confirmPassword)){
-                    EditText etLogin = findViewById(R.id.input_login);
-                    form.add(etLogin);
-                    String login = etLogin.getText().toString();
-
-                    EditText etName = findViewById(R.id.input_name);
-                    form.add(etName);
-                    String name = etName.getText().toString();
-
-                    EditText etCity = findViewById(R.id.input_city);
-                    form.add(etCity);
-                    String city = etCity.getText().toString();
-
-                    String birthDate = etBrithDate.getText().toString();
-
-                    ImageView ivUserPhoto = findViewById(R.id.input_image_preview);
-
-                    if(FieldValidator.validateForm(SignupActivity.this, form)
-                            && FieldValidator.validateImage(SignupActivity.this, ivUserPhoto))
-                    {
-                        //TODO: Enviar dados para api
-                        finish();
-                    }
-                }
-                else{
-                    Toast toast = Toast.makeText(SignupActivity.this, "Senha e confirmação não batem", Toast.LENGTH_LONG);
-                    toast.show();
+                    //TODO: Enviar para API
+                    finish();
                 }
             }
         });
@@ -130,7 +101,7 @@ public class SignupActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        ImageView ivUserPhoto = findViewById(R.id.input_image_preview);
+        ImageView ivPhoto = findViewById(R.id.photo);
 
         if(requestCode == Const.RESULT_TAKE_PICTURE) {
             if(resultCode == Activity.RESULT_OK) {
@@ -138,7 +109,7 @@ public class SignupActivity extends AppCompatActivity {
 
                 int dimensions = (int) this.getResources().getDimension(R.dimen.input_image_preview);
                 Bitmap bitmap = this.imageProvider.getBitmap(this.photo, dimensions, dimensions);
-                ivUserPhoto.setImageBitmap(bitmap);
+                ivPhoto.setImageBitmap(bitmap);
             }
             else {
                 File f = new File(this.imageProvider.getCurrentPhotoPath());
@@ -147,7 +118,7 @@ public class SignupActivity extends AppCompatActivity {
         }
         else if(requestCode == Const.RESULT_PICK_IN_GALLERY) {
             Uri imageUri = data.getData();
-            ivUserPhoto.setImageURI(imageUri);
+            ivPhoto.setImageURI(imageUri);
         }
     }
 }

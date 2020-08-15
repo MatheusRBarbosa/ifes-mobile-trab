@@ -2,6 +2,7 @@ package com.ifes.mobile.redesocial;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -16,9 +17,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.ifes.mobile.redesocial.Utils.Dialog;
 import com.ifes.mobile.redesocial.Utils.MarginItemDecoration;
 import com.ifes.mobile.redesocial.models.Post;
 import com.ifes.mobile.redesocial.models.User;
+import com.ifes.mobile.redesocial.services.ImageProvider;
 import com.ifes.mobile.redesocial.services.Mock;
 import com.ifes.mobile.redesocial.services.SessionManager;
 import com.ifes.mobile.redesocial.ui.post.PostAdapter;
@@ -36,12 +39,17 @@ public class MainActivity extends AppCompatActivity {
     List<Post> posts = new ArrayList<>();
     List<Post> filteredPosts = new ArrayList<>();
     PostAdapter postAdapter;
+    Dialog dialog;
+    ImageProvider imageProvider;
     User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.imageProvider = new ImageProvider(this);
+        this.dialog = new Dialog(this, this.imageProvider);
 
         // Creating session
         sessionManager = new SessionManager(MainActivity.this);
@@ -116,15 +124,20 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        Intent i;
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.op_friends:
-                Intent i = new Intent(MainActivity.this, FollowingActivity.class);
+                i = new Intent(MainActivity.this, FollowingActivity.class);
                 startActivity(i);
                 return true;
             case R.id.op_new_post:
+                AlertDialog alertDialog = this.dialog.createNewPostDialog();
+                alertDialog.show();
                 return true;
             case R.id.op_gallery:
+                i = new Intent(MainActivity.this, GalleryActivity.class);
+                startActivity(i);
                 return true;
             case R.id.op_logout:
                 this.sessionManager.logout();

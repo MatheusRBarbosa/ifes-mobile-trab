@@ -174,4 +174,85 @@ public class Mock {
 
         return posts;
     }
+
+    //API: Retorna todos os posts
+    static public List<Post> getAllPostsFromUserId(int id){
+        List<Post> posts = new ArrayList<>();
+
+        // Mock user
+        User user1 = new User(1, "Matheus", "http://clipart-library.com/images/kiKo7BoqT.png", "Serra");
+        User user2 = new User(2, "Barbosa", "https://i.imgur.com/iHsr4Nd.png", "Fundao");
+        User user3 = new User(3, "Fernando da silva", "https://img.icons8.com/bubbles/2x/user.png", "Vitoria");
+        User user4 = new User(4, "Pato", "https://i.imgur.com/91fQ6UO.jpg","Serra");
+        User user5 = new User(5, "Gato", "https://i.imgur.com/4AiXzf8.jpg", "Cariacica");
+        User user6 = new User(6, "Cachorro", "https://i.imgur.com/H37kxPH.jpeg", "Vitoria");
+
+        // Mock comments
+        List<Comment> comments1 = new ArrayList<>();
+        Comment c1 = new Comment(user2, "Voce quase conseguiu fazer funcionar", new Date());
+        Comment c2 = new Comment(user3, "Dessa vez nao funcionou!", new Date());
+        Comment c3 = new Comment(user3, "Vai lá, você consegue!", new Date());
+        comments1.add(c1);
+        comments1.add(c2);
+        comments1.add(c3);
+
+        List<Comment> comments2 = new ArrayList<>();
+        Comment p1 = new Comment(user2, "Esse post eh incrivel!", new Date());
+        Comment p2 = new Comment(user2, "Sera que eu posso ser um desenvolvedor tao bom quanto voce?", new Date());
+        comments2.add(p1);
+        comments2.add(p2);
+
+        List<Comment> comments3 = new ArrayList<>();
+        Comment l1 = new Comment(user3, "Fotao!", new Date());
+        Comment l2 = new Comment(user1, "Que bela foto", new Date());
+        comments3.add(l1);
+        comments3.add(l2);
+
+        List<Comment> comments4 = new ArrayList<>();
+        Comment d1 =  new Comment(user5, "Au au", new Date());
+        comments4.add(d1);
+
+        // Mock posts
+        Post post1 = new Post(
+                1,
+                user1,
+                new Date(),
+                comments1,
+                "Minha primeira postagem"
+        );
+        post1.postText = new PostText("Texto generico superficial");
+        posts.add(post1);
+
+        Post post11 = new Post(
+                11,
+                user1,
+                new Date(),
+                comments1,
+                "Minha Segunda postagem"
+        );
+        post11.postText = new PostText("Texto generico superficial2");
+        posts.add(post11);
+
+        Post post111 = new Post(
+                111,
+                user1,
+                new Date(),
+                comments1,
+                "Minha Segunda postagem"
+        );
+        post111.postImage = new PostImage("aaaa", "https://i.pinimg.com/originals/cf/c9/d8/cfc9d8bcc3d9132edf5347915df6bb35.jpg");
+        posts.add(post111);
+
+        Post post1111 = new Post(
+                1111,
+                user1,
+                new Date(),
+                comments1,
+                "Minha Segunda postagem"
+        );
+        post1111.postImage = new PostImage("bbb", "https://i.pinimg.com/564x/12/26/5d/12265d7803951a30bd98d63b3b1e89f7.jpg");
+        posts.add(post1111);
+
+        return posts;
+    }
 }
