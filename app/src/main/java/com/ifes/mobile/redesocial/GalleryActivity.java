@@ -37,8 +37,8 @@ public class GalleryActivity extends AppCompatActivity {
         this.userId = Integer.parseInt(loggedUser.get("ID"));
         List<Post> posts = Mock.getAllPostsFromUserId(this.userId); //TODO: Pegar da API
 
-        // Setting up action bar
         Toolbar toolbar = findViewById(R.id.menu_top);
+        // Setting up action bar
         setSupportActionBar(toolbar);
 
         ActionBar actionBar = getSupportActionBar();
@@ -50,8 +50,8 @@ public class GalleryActivity extends AppCompatActivity {
 
         float w = getResources().getDimension(R.dimen.gallery_item);
         int numberOfColums = Layout.calculateNoOfColums(GalleryActivity.this, w);
+        //TODO: BUG - O espacamento esta estranho, nas esta correto.
         GridLayoutManager gridLayoutManager = new GridLayoutManager(GalleryActivity.this, numberOfColums);
-
         RecyclerView rvGallery = findViewById(R.id.rvGallery);
         rvGallery.setAdapter(galleryAdapter);
         rvGallery.setLayoutManager(gridLayoutManager);
