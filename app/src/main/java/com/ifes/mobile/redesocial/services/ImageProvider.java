@@ -1,11 +1,14 @@
 package com.ifes.mobile.redesocial.services;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
@@ -87,6 +90,31 @@ public class ImageProvider {
 
         this.currentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+    public String getFullPath(Uri uri){
+        Context context = this.activity.getApplicationContext();
+
+        String filePath = "";
+        String wholeID = DocumentsContract.getDocumentId(uri);
+
+        String id = wholeID.split(":")[1];
+
+        String[] column = { MediaStore.Images.Media.DATA };
+
+        // where id is equal to
+        String sel = MediaStore.Images.Media._ID + "=?";
+
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                column, sel, new String[]{ id }, null);
+
+        int columnIndex = cursor.getColumnIndex(column[0]);
+
+        if (cursor.moveToFirst()) {
+            filePath = cursor.getString(columnIndex);
+        }
+        cursor.close();
+        return filePath;
     }
 
 

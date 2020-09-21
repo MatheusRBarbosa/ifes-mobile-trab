@@ -136,10 +136,8 @@
         android:layout_height="@dimen/btn_icon"
         android:layout_marginStart="32dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="8dp"
         android:background="@drawable/style_rounded_icon_button"
         android:tint="@color/design_default_color_on_secondary"
-        app:layout_constraintEnd_toStartOf="@+id/input_image_preview"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/input_date"
         app:srcCompat="@drawable/ic_add_photo" />
@@ -148,11 +146,13 @@
         android:id="@+id/input_image_preview"
         android:layout_width="@dimen/input_image_preview"
         android:layout_height="@dimen/input_image_preview"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
-        android:layout_marginEnd="32dp"
+        android:layout_marginEnd="16dp"
         android:layout_marginBottom="32dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_signup"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/btn_image_picker"
         app:layout_constraintTop_toBottomOf="@+id/input_date"
         tools:srcCompat="@tools:sample/avatars" />
 

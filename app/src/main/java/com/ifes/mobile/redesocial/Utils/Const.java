@@ -1,5 +1,7 @@
 package com.ifes.mobile.redesocial.Utils;
 
+import java.util.Locale;
+
 public class Const {
 
     // Dialogs options
@@ -19,4 +21,24 @@ public class Const {
     // Posts Types
     public static int POST_TEXT_TYPE = 1;
     public static int POST_PHOTO_TYPE = 2;
+
+
+    // API Status responses
+    public static final int SUCCESS = 0;
+    public static final int UNAUTHORIZED = 1;
+    public static String UNAUTHORIZED_TEXT = "O usuário deve estar logado corretamente para fazer isso!";
+    public static final int BAD_REQUEST = 2;
+    public static String BAD_REQUEST_TEXT = "BAD REQUEST";
+    public static final int SERVER_ERROR = 3;
+    public static String SERVER_ERROR_TEXT = "SERVER ERROR";
+
+    // Date
+    public static Locale LOCALE_BRAZIL = new Locale("pt", "BR");
+    public static String DATE_PATTERN = "dd/MM/yyyy";
+    public static String DATETIME_PATTERN = "dd/MM/yyyy HH:mm:ss";
+
+    // Create API uri
+    public static String apiUrl(String resource) {
+        return "http://34.125.85.252/social/" + resource;
+    }
 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -20,14 +21,27 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.ifes.mobile.redesocial.Utils.DateHandler;
 import com.ifes.mobile.redesocial.Utils.Dialog;
 import com.ifes.mobile.redesocial.Utils.FieldValidator;
 import com.ifes.mobile.redesocial.Utils.Mask;
 import com.ifes.mobile.redesocial.Utils.Const;
+import com.ifes.mobile.redesocial.Utils.Streams;
+import com.ifes.mobile.redesocial.services.HttpRequest;
 import com.ifes.mobile.redesocial.services.ImageProvider;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class SignupActivity extends AppCompatActivity {
 
@@ -101,7 +115,18 @@ public class SignupActivity extends AppCompatActivity {
                             && FieldValidator.validateImage(SignupActivity.this, ivUserPhoto))
                     {
                         //TODO: Enviar dados para api
-                        finish();
+                        try {
+                            SignupActivity.this.postUser(
+                                    login,
+                                    password,
+                                    name,
+                                    city,
+                                    birthDate
+                            );
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
                     }
                 }
                 else{
@@ -147,7 +172,55 @@ public class SignupActivity extends AppCompatActivity {
         }
         else if(requestCode == Const.RESULT_PICK_IN_GALLERY) {
             Uri imageUri = data.getData();
+            this.photo = this.imageProvider.getFullPath(imageUri);
+            System.out.println(this.photo);
             ivUserPhoto.setImageURI(imageUri);
         }
+    }
+
+    private void postUser(String login, String password, String name, String city, String birthDate) throws ParseException {
+        final String apiUrl = Const.apiUrl("cadastra_usuario.php");
+        System.out.println("Posting On: " + apiUrl);
+
+        long formatedDate = DateHandler.convertToLong(birthDate, Const.DATE_PATTERN);
+
+        new AsyncTask<String, Void, JSONObject>() {
+            HttpRequest http = new HttpRequest(apiUrl, "POST");
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                http.addParam("login", strings[0]);
+                http.addParam("senha", strings[1]);
+                http.addParam("nome", strings[2]);
+                http.addParam("cidade", strings[3]);
+                http.addParam("data_nascimento", strings[4]);
+                http.addFile("foto", new File(strings[5]));
+
+                try {
+                    InputStream is = http.execute();
+                    String result = Streams.inputStream2String(is);
+                    http.finish();
+                    System.out.println(result);
+                    return new JSONObject(result);
+                }
+                catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject json) {
+                try {
+                    http.handleResult(SignupActivity.this, json);
+                    int status = json.getInt("status");
+                    if(status == Const.SUCCESS) {
+                        SignupActivity.this.finish();
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(login, password, name, city, formatedDate + "", this.photo);
+
     }
 }
