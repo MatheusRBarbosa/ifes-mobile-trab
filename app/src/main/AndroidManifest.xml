@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ifes.mobile.redesocial">
+    package="com.example.redesocial">
 
     <uses-feature android:name="android.hardware.cammera" android:required="false"/>
 
@@ -18,6 +18,14 @@
         android:requestLegacyExternalStorage="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
 
+        <service android:name=".services.Firebase"
+            android:enabled="true"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -25,6 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name=".LoginActivity" android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".CommentsActivity" android:parentActivityName=".MainActivity"></activity>
         <activity android:name=".FollowingActivity" android:parentActivityName=".MainActivity"></activity>
@@ -35,7 +44,7 @@
         <activity android:name=".SignupActivity" android:parentActivityName=".LoginActivity"></activity>
 
         <provider
-            android:authorities="com.ifes.mobile.redesocial.fileprovider"
+            android:authorities="com.example.redesocial.fileprovider"
             android:name="androidx.core.content.FileProvider"
             android:exported="false"
             android:grantUriPermissions="true">
