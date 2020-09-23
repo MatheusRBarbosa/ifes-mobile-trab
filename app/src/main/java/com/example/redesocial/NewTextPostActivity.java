@@ -10,18 +10,32 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.example.redesocial.Utils.FieldValidator;
+import com.example.redesocial.services.Api;
 import com.example.redesocial.services.SessionManager;
+
+import java.util.HashMap;
 
 public class NewTextPostActivity extends AppCompatActivity {
 
-    SessionManager sessionManager;
+    Api api;
+    String userToken;
+    String userLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sessionManager = new SessionManager(NewTextPostActivity.this);
-        sessionManager.checkLogin();
+        SessionManager.checkLogin(NewTextPostActivity.this);
+        final HashMap<String, String> loggedUser = SessionManager.getUserDetail(NewTextPostActivity.this);
+
+        this.userToken = loggedUser.get("token");
+        this.userLogin = loggedUser.get("login");
+
+        System.out.println("===== LOGIN & TOKEN =====");
+        System.out.println(this.userLogin);
+        System.out.println(this.userToken);
+
+        this.api = new Api(getApplicationContext());
 
         setContentView(R.layout.activity_new_text_post);
 
@@ -43,6 +57,7 @@ public class NewTextPostActivity extends AppCompatActivity {
                 if(FieldValidator.validateField(NewTextPostActivity.this, etText)) {
                     String text = etText.getText().toString();
                     //TODO: Enviar para API
+                    api.postPost(userLogin, userToken, text, null);
                     finish();
                 }
             }

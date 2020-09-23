@@ -13,6 +13,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.example.redesocial.services.Api;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.redesocial.Utils.Dialog;
 import com.example.redesocial.Utils.MarginItemDecoration;
@@ -27,37 +28,50 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    SessionManager sessionManager;
+    //SessionManager sessionManager;
 
     BottomNavigationView bottomNavigationView;
     List<Post> posts = new ArrayList<>();
     List<Post> filteredPosts = new ArrayList<>();
+    Api api;
     PostAdapter postAdapter;
     Dialog dialog;
     ImageProvider imageProvider;
-    User user;
+    String userLogin;
+    String userToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        api = new Api(MainActivity.this);
+
         this.imageProvider = new ImageProvider(this);
         this.dialog = new Dialog(this, this.imageProvider);
 
         // Creating session
-        sessionManager = new SessionManager(MainActivity.this);
-        final HashMap<String, String> loggedUser = sessionManager.getUserDetail();
+        //sessionManager = new SessionManager(MainActivity.this);
+        final HashMap<String, String> loggedUser = SessionManager.getUserDetail(MainActivity.this);
 
         // Mocking data = Mudar para API
         posts = Mock.getAllPosts(); //TODO: Consumir dados da API
-        this.user = Mock.getUser(Integer.parseInt(loggedUser.get("ID"))); //TODO: pegar user da API
+
+        this.userLogin = "asdf";//loggedUser.get("login");
+        this.userToken = "DRI0KtfnVX";//loggedUser.get("token");
+
+
+        //JSONObject response = api.getFollowing(userLogin, userToken);
 
         // Setting up Adapter
         filteredPosts.addAll(posts);
@@ -89,20 +103,34 @@ public class MainActivity extends AppCompatActivity {
                                 filteredPosts.addAll(posts);
                                 break;
                             case R.id.op_my_world:
-                                sessionManager.checkLogin();
-                                List<User> following = user.getFollowing();
+                                SessionManager.checkLogin(MainActivity.this);
+                                //List<User> following = user.getFollowing();
+                                JSONObject response = api.getFollowing(userLogin, userToken);
+                                JSONArray following = null;
+                                try {
+                                    following = response.getJSONArray("seguindo");
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+
                                 for(Post post: posts) {
-                                    for(User follow: following) {
-                                        if(post.user.id == follow.id){
+                                    String fLogin = "";
+                                    for(int i = 0; i < following.length(); i++) {
+                                        try {
+                                            fLogin = following.getJSONObject(i).getString("login");
+                                        } catch (JSONException e) {
+                                            e.printStackTrace();
+                                        }
+                                        if(post.user.login.equals(fLogin)){
                                             filteredPosts.add(post);
                                         }
                                     }
                                 }
                                 break;
                             case R.id.op_me:
-                                sessionManager.checkLogin();
+                                SessionManager.checkLogin(MainActivity.this);
                                 for(Post post: posts) {
-                                    if(post.user.id == user.id) {
+                                    if(post.user.login.equals(userLogin)) {
                                         filteredPosts.add(post);
                                     }
                                 }
@@ -140,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(i);
                 return true;
             case R.id.op_logout:
-                this.sessionManager.logout();
+                SessionManager.logout(MainActivity.this);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

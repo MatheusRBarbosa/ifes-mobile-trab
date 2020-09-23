@@ -25,12 +25,14 @@ import java.util.List;
 public class FindUsersAdapter extends RecyclerView.Adapter {
     List<User> users;
     User user;
+    String login;
     FindUsersActivity findUsersActivity;
 
     public FindUsersAdapter(FindUsersActivity findUsersActivity, List<User> users, int userId){
         this.findUsersActivity = findUsersActivity;
         this.users = users;
         this.user = Mock.getUser(userId); //TODO: Pegar da api
+        this.login = this.user.login;
     }
 
     @NonNull
@@ -47,7 +49,7 @@ public class FindUsersAdapter extends RecyclerView.Adapter {
         boolean isFollowing = false;
         final boolean finalIsFollowing;
 
-        if(user.id != this.user.id) {
+        if(!user.login.equals(this.login)) {
             // RequestOptions to use when load image is needed
             RequestOptions glideOptions = new RequestOptions()
                     .placeholder(R.drawable.ic_everybody)
@@ -90,7 +92,7 @@ public class FindUsersAdapter extends RecyclerView.Adapter {
 
 
             for(User following: this.user.following) {
-                if(following.id == user.id){
+                if(following.equals(this.login)){
                     isFollowing = true;
                     break;
                 }

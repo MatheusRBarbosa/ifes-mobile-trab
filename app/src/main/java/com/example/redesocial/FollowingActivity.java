@@ -24,17 +24,17 @@ import java.util.HashMap;
 public class FollowingActivity extends AppCompatActivity {
 
     private int userId;
-    SessionManager sessionManager;
+    //SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_following);
 
-        sessionManager = new SessionManager(FollowingActivity.this);
-        sessionManager.checkLogin();
+        //sessionManager = new SessionManager(FollowingActivity.this);
+        SessionManager.checkLogin(FollowingActivity.this);
 
-        final HashMap<String, String> loggedUser = sessionManager.getUserDetail();
+        final HashMap<String, String> loggedUser = SessionManager.getUserDetail(FollowingActivity.this);
 
         // Setting up action bar
         Toolbar toolbar = findViewById(R.id.menu_top);

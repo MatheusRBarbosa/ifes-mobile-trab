@@ -19,20 +19,20 @@ import java.util.List;
 
 public class GalleryActivity extends AppCompatActivity {
 
-    SessionManager sessionManager;
+    //SessionManager sessionManager;
     int userId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sessionManager = new SessionManager(GalleryActivity.this);
-        sessionManager.checkLogin();
+        //sessionManager = new SessionManager(GalleryActivity.this);
+        SessionManager.checkLogin(GalleryActivity.this);
 
         setContentView(R.layout.activity_gallery);
 
         // Setting up user photos
-        final HashMap<String, String> loggedUser = sessionManager.getUserDetail();
+        final HashMap<String, String> loggedUser = SessionManager.getUserDetail(GalleryActivity.this);
         this.userId = Integer.parseInt(loggedUser.get("ID"));
         List<Post> posts = Mock.getAllPostsFromUserId(this.userId); //TODO: Pegar da API
 

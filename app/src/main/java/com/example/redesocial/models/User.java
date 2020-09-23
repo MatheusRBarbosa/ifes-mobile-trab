@@ -7,7 +7,7 @@ import java.util.Date;
 import java.util.List;
 
 public class User {
-    public int id;
+    public String login;
     public String name;
     public String thumbUrl;
     public List<User> following;
@@ -15,8 +15,8 @@ public class User {
     private String birthDate;
     private String email;
 
-    public User(int id, String name, String thumbUrl, String city){
-        this.id = id;
+    public User(String login, String name, String thumbUrl, String city){
+        this.login = login;
         this.name = name;
         this.thumbUrl = thumbUrl;
         this.city = city;
@@ -26,9 +26,11 @@ public class User {
         return email;
     }
 
+    /*
     public List<User> getFollowing() {
         return following;
     }
+     */
 
     public String getBirthDate() {
         return birthDate;

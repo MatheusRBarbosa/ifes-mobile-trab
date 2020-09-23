@@ -11,41 +11,31 @@ import java.util.HashMap;
 
 public class SessionManager {
 
-    SharedPreferences sharedPreferences;
-    public SharedPreferences.Editor editor;
-    public Context context;
-    int PRIVATE_MODE = 0;
-
+    private static final int PRIVATE_MODE = 0;
     private static final String PREF_NAME = "LOGIN";
     private static final String LOGIN = "IS_LOGIN";
-    public static final String NAME = "NAME";
-    public static final String EMAIL = "EMAIL";
-    public static final String ID = "ID";
-    public static final String APP_TOKEN="APP_TOKEN";
+    public static final String AUTH_TOKEN = "AUTH_TOKEN";
+    public static final String DEVICE_TOKEN = "DEVICE_TOKEN";
 
-    public SessionManager(Context context) {
-        this.context = context;
-        sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
-        editor = sharedPreferences.edit();
-    }
-
-    public void createSession(int id, String name, String email){
+    public static void createSession(Context context, String login, String token) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
 
         editor.putBoolean(LOGIN, true);
-        editor.putString(NAME, name);
-        editor.putString(EMAIL, email);
-        editor.putInt(ID, id);
-        editor.apply();
+        editor.putString(PREF_NAME, login);
+        editor.putString(AUTH_TOKEN, token);
 
+        editor.apply();
     }
 
-    public boolean isLoggin(){
+    public static boolean isLoggin(Context context){
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         return sharedPreferences.getBoolean(LOGIN, false);
     }
 
-    public void checkLogin(){
+    public static void checkLogin(Context context) {
 
-        if (!this.isLoggin()){
+        if (!isLoggin(context)){
             Intent i = new Intent(context, LoginActivity.class);
             context.startActivity(i);
             Activity activity = (Activity) context;
@@ -53,17 +43,22 @@ public class SessionManager {
         }
     }
 
-    public HashMap<String, String> getUserDetail(){
+    public static HashMap<String, String> getUserDetail(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
 
         HashMap<String, String> user = new HashMap<>();
-        user.put(NAME, sharedPreferences.getString(NAME, null));
-        user.put(EMAIL, sharedPreferences.getString(EMAIL, null));
-        user.put(ID, "" + sharedPreferences.getInt(ID, 0));
+        String login = sharedPreferences.getString(PREF_NAME, null);
+        String token = sharedPreferences.getString(AUTH_TOKEN, null);
+        user.put("login", login);
+        user.put("token", token);
 
         return user;
     }
 
-    public void logout(){
+    public static void logout(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
         editor.clear();
         editor.commit();
         Intent i = new Intent(context, LoginActivity.class);
@@ -73,15 +68,15 @@ public class SessionManager {
     }
 
     public static void setToken(Context context, String token) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("LOGIN", 0);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("token", token);
+        editor.putString(DEVICE_TOKEN, token);
         editor.apply();
     }
 
     public static String getToken(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("LOGIN", 0);
-        return sharedPreferences.getString("token", "");
+        SharedPreferences sharedPreferences = context.getSharedPreferences(PREF_NAME, PRIVATE_MODE);
+        return sharedPreferences.getString(DEVICE_TOKEN, "");
     }
 
 }

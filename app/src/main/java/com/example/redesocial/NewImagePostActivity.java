@@ -30,7 +30,7 @@ import java.io.File;
 public class NewImagePostActivity extends AppCompatActivity {
 
     private ImageProvider imageProvider;
-    SessionManager sessionManager;
+    //SessionManager sessionManager;
     private Dialog dialog;
     private String photo;
 
@@ -38,8 +38,8 @@ public class NewImagePostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sessionManager = new SessionManager(NewImagePostActivity.this);
-        sessionManager.checkLogin();
+        //sessionManager = new SessionManager(NewImagePostActivity.this);
+        SessionManager.checkLogin(NewImagePostActivity.this);
 
         setContentView(R.layout.activity_new_image_post);
 

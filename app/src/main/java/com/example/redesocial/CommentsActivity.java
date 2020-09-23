@@ -23,14 +23,15 @@ import java.util.List;
 
 public class CommentsActivity extends AppCompatActivity {
 
-    SessionManager sessionManager;
+    //SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
-        sessionManager = new SessionManager(CommentsActivity.this);
+        //sessionManager = new SessionManager(CommentsActivity.this);
+
 
         // Setting up top menu
         Toolbar toolbar = findViewById(R.id.menu_top);
@@ -57,7 +58,7 @@ public class CommentsActivity extends AppCompatActivity {
         final EditText etComment = findViewById(R.id.send_comment);
         Button btnSendComment = findViewById(R.id.btn_send_comment);
 
-        if(!sessionManager.isLoggin()){
+        if(!SessionManager.isLoggin(CommentsActivity.this)){
             btnSendComment.setEnabled(false);
             etComment.setEnabled(false);
             etComment.setText(R.string.loggin_needed);
