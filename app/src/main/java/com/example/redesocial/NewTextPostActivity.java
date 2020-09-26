@@ -31,10 +31,6 @@ public class NewTextPostActivity extends AppCompatActivity {
         this.userToken = loggedUser.get("token");
         this.userLogin = loggedUser.get("login");
 
-        System.out.println("===== LOGIN & TOKEN =====");
-        System.out.println(this.userLogin);
-        System.out.println(this.userToken);
-
         this.api = new Api(getApplicationContext());
 
         setContentView(R.layout.activity_new_text_post);
@@ -56,7 +52,7 @@ public class NewTextPostActivity extends AppCompatActivity {
 
                 if(FieldValidator.validateField(NewTextPostActivity.this, etText)) {
                     String text = etText.getText().toString();
-                    //TODO: Enviar para API
+
                     api.postPost(userLogin, userToken, text, null);
                     finish();
                 }

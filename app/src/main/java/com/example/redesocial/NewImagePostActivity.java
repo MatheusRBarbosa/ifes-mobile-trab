@@ -22,29 +22,38 @@ import androidx.appcompat.widget.Toolbar;
 import com.example.redesocial.Utils.Const;
 import com.example.redesocial.Utils.Dialog;
 import com.example.redesocial.Utils.FieldValidator;
+import com.example.redesocial.services.Api;
 import com.example.redesocial.services.ImageProvider;
 import com.example.redesocial.services.SessionManager;
 
 import java.io.File;
+import java.util.HashMap;
 
 public class NewImagePostActivity extends AppCompatActivity {
 
     private ImageProvider imageProvider;
-    //SessionManager sessionManager;
     private Dialog dialog;
     private String photo;
+    private Api api;
+    private String userToken;
+    private String userLogin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //sessionManager = new SessionManager(NewImagePostActivity.this);
         SessionManager.checkLogin(NewImagePostActivity.this);
 
         setContentView(R.layout.activity_new_image_post);
 
         this.imageProvider = new ImageProvider(this);
         this.dialog = new Dialog(this, this.imageProvider);
+
+        final HashMap<String, String> loggedUser = SessionManager.getUserDetail(NewImagePostActivity.this);
+        this.userToken = loggedUser.get("token");
+        this.userLogin = loggedUser.get("login");
+
+        this.api = new Api(getApplicationContext());
 
         // Setting up action bar
         Toolbar toolbar = findViewById(R.id.menu_top);
@@ -75,8 +84,9 @@ public class NewImagePostActivity extends AppCompatActivity {
                         && FieldValidator.validateImage(NewImagePostActivity.this, ivPhoto))
                 {
                     String photoTitle = etTitle.getText().toString();
-
-                    //TODO: Enviar para API
+                    System.out.println("====== PHOTO ======");
+                    System.out.println(photo);
+                    api.postPost(userLogin, userToken, photoTitle, photo);
                     finish();
                 }
             }
@@ -118,6 +128,7 @@ public class NewImagePostActivity extends AppCompatActivity {
         }
         else if(requestCode == Const.RESULT_PICK_IN_GALLERY) {
             Uri imageUri = data.getData();
+            this.photo = this.imageProvider.getFullPath(imageUri);
             ivPhoto.setImageURI(imageUri);
         }
     }
