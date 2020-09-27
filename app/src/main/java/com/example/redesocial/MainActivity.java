@@ -38,8 +38,6 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    //SessionManager sessionManager;
-
     BottomNavigationView bottomNavigationView;
     List<Post> posts = new ArrayList<>();
     List<Post> filteredPosts = new ArrayList<>();
@@ -55,20 +53,19 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        api = new Api(MainActivity.this);
-
         this.imageProvider = new ImageProvider(this);
         this.dialog = new Dialog(this, this.imageProvider);
 
         // Creating session
-        //sessionManager = new SessionManager(MainActivity.this);
         final HashMap<String, String> loggedUser = SessionManager.getUserDetail(MainActivity.this);
+        this.userToken = loggedUser.get("token");
+        this.userLogin = loggedUser.get("login");
 
-        // Mocking data = Mudar para API
-        posts = Mock.getAllPosts(); //TODO: Consumir dados da API
+        this.api = new Api(getApplicationContext());
 
-        this.userLogin = "asdf";//loggedUser.get("login");
-        this.userToken = "DRI0KtfnVX";//loggedUser.get("token");
+        // Setting posts data
+        //posts = Mock.getAllPosts(); //TODO: Consumir dados da API
+        posts = api.getPosts(this.userLogin, this.userToken, 0);
 
 
         //JSONObject response = api.getFollowing(userLogin, userToken);
@@ -98,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                         filteredPosts.clear();
-                        switch (item.getItemId()){
+                        switch (item.getItemId()) {
                             case R.id.op_everybody:
                                 filteredPosts.addAll(posts);
                                 break;

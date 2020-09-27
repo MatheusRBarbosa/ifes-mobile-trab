@@ -218,7 +218,9 @@ public class HttpRequest {
             responseText = status + " - " + messege;
         }
 
-        Toast toast = Toast.makeText(context, responseText, Toast.LENGTH_LONG);
-        toast.show();
+        if(!messege.equals("sem comentarios")) {
+            Toast toast = Toast.makeText(context, responseText, Toast.LENGTH_LONG);
+            toast.show();
+        }
     }
 }

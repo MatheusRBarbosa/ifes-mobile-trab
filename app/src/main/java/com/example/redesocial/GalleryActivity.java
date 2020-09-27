@@ -14,6 +14,7 @@ import com.example.redesocial.services.Mock;
 import com.example.redesocial.services.SessionManager;
 import com.example.redesocial.ui.gallery.GalleryAdapter;
 
+import java.text.ParseException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -34,7 +35,12 @@ public class GalleryActivity extends AppCompatActivity {
         // Setting up user photos
         final HashMap<String, String> loggedUser = SessionManager.getUserDetail(GalleryActivity.this);
         this.userId = Integer.parseInt(loggedUser.get("ID"));
-        List<Post> posts = Mock.getAllPostsFromUserId(this.userId); //TODO: Pegar da API
+        List<Post> posts = null; //TODO: Pegar da API
+        try {
+            posts = Mock.getAllPostsFromUserId(this.userId);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         Toolbar toolbar = findViewById(R.id.menu_top);
         // Setting up action bar

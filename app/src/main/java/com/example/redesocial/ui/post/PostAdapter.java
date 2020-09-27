@@ -74,12 +74,14 @@ public class PostAdapter extends RecyclerView.Adapter {
         tvPostDate.setText(date);
 
         // Loading last comment
+
         TextView tvLastComment = holder.itemView.findViewById(R.id.last_comment);
         Comment comment = post.getLastComment();
         String lastCommentText = comment.text;
         User lastCommentUser = comment.user;
         String lastComment = lastCommentUser.name + ": " + lastCommentText;
         tvLastComment.setText(lastComment);
+
 
         // If text post, load it
         if(this.getItemViewType(position) == Const.POST_TEXT_TYPE){

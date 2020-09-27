@@ -37,9 +37,6 @@ public class Const {
     public static String DATE_PATTERN = "dd/MM/yyyy";
     public static String DATETIME_PATTERN = "dd/MM/yyyy HH:mm:ss";
 
-    // FCM
-    public static String APP_ID = "1:998288060137:android:d5febc9339b6bb43108a78";
-
     // Create API uri
     public static String apiUrl(String resource) {
         return "http://34.125.85.252/social/" + resource;

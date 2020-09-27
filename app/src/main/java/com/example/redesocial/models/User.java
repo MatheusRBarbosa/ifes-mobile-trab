@@ -15,11 +15,10 @@ public class User {
     private String birthDate;
     private String email;
 
-    public User(String login, String name, String thumbUrl, String city){
+    public User(String login, String name, String thumbUrl){
         this.login = login;
         this.name = name;
         this.thumbUrl = thumbUrl;
-        this.city = city;
     }
 
     public String getEmail() {

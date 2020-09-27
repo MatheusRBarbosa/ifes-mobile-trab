@@ -1,22 +1,29 @@
 package com.example.redesocial.services;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.widget.Toast;
 
-import com.example.redesocial.LoginActivity;
-import com.example.redesocial.MainActivity;
 import com.example.redesocial.Utils.Const;
 import com.example.redesocial.Utils.Holder;
 import com.example.redesocial.Utils.Streams;
+import com.example.redesocial.models.Comment;
+import com.example.redesocial.models.Post;
+import com.example.redesocial.models.PostImage;
+import com.example.redesocial.models.PostText;
+import com.example.redesocial.models.User;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 public class Api {
 
@@ -167,5 +174,140 @@ public class Api {
         }.execute(login, token);
 
         return response.get();
+    }
+
+    public List<Post> getPosts(String login, String token, int scope) {
+        final String apiUrl = Const.apiUrl("pegar_posts.php");
+        final List<Post> posts = new ArrayList<>();
+
+        new AsyncTask<String, Void, JSONObject>() {
+            HttpRequest http = new HttpRequest(apiUrl, "GET");
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                http.addParam("login", strings[0]);
+                http.addParam("token", strings[1]);
+                http.addParam("tipo_timeline", strings[2]);
+
+                try {
+                    InputStream is = http.execute();
+                    String result = Streams.inputStream2String(is);
+                    http.finish();
+
+                    return new JSONObject(result);
+                }
+                catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject json) {
+                try {
+                    http.handleResult(context, json);
+                    int status = json.getInt("status");
+                    if(status == Const.SUCCESS) {
+                        JSONArray list = json.getJSONArray("posts");
+                        for (int i = 0; i < list.length(); i++) {
+                            JSONObject object = list.getJSONObject(i);
+                            int postId = object.getInt("idpost");
+                            // User
+                            String userPhoto = Const.apiUrl(object.getString("foto_usuario"));
+                            User user = new User(
+                                    object.getString("login"),
+                                    object.getString("nome"),
+                                    userPhoto
+                            );
+                            // Post
+                            Post post = new Post(
+                                    postId,
+                                    user,
+                                    object.getString("data_hora"),
+                                    "Super titulo"
+                            );
+
+                            String imagePath = object.getString("imagem");
+                            String text = object.getString("texto");
+                            if(imagePath.isEmpty()) {
+                                post.postText = new PostText(text);
+                            }
+                            else {
+                                String imageContent = Const.apiUrl(object.getString("imagem"));
+                                post.postImage = new PostImage(text, imageContent);
+                            }
+
+                            List<Comment> comments = getComements(postId);
+                            post.setComments(comments);
+                            posts.add(post);
+                        }
+                    }
+
+                } catch (JSONException | ParseException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(login, token, "" + scope);
+
+        return posts;
+    }
+
+    public List<Comment> getComements(int postId) {
+        final String apiUrl = Const.apiUrl("pegar_comentarios.php");
+        final List<Comment> comments = new ArrayList<>();
+
+        new AsyncTask<String, Void, JSONObject>() {
+            HttpRequest http = new HttpRequest(apiUrl, "GET");
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                http.addParam("idpost", strings[0]);
+
+                try {
+                    InputStream is = http.execute();
+                    String result = Streams.inputStream2String(is);
+                    http.finish();
+
+                    return new JSONObject(result);
+                }
+                catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject json) {
+                try {
+                    http.handleResult(context, json);
+                    int status = json.getInt("status");
+                    if(status == Const.SUCCESS) {
+                        JSONArray list = json.getJSONArray("comentarios");
+                        for (int i = 0; i < list.length(); i++) {
+                            JSONObject object = list.getJSONObject(i);
+
+                            // User
+                            String userPhoto = Const.apiUrl(object.getString("foto_usuario"));
+                            User user = new User(
+                                    "",
+                                    object.getString("nome"),
+                                    userPhoto
+                            );
+                            // Comment
+                            Comment comment = new Comment(
+                                    user,
+                                    object.getString("texto"),
+                                    object.getString("data_hora")
+
+                            );
+                            comments.add(comment);
+                        }
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(""+postId);
+
+        return comments;
     }
 }

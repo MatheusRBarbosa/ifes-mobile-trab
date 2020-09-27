@@ -2,6 +2,10 @@ package com.example.redesocial.models;
 
 import com.example.redesocial.Utils.Const;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -17,16 +21,15 @@ public class Post {
     public Post(
             int id,
             User user,
-            Date postDate,
-            List<Comment> comments,
+            String postDate,
             String title
-        )
-        {
+        ) throws ParseException {
             this.id = id;
             this.user = user;
-            this.postDate = postDate;
-            this.comments = comments;
+            this.comments = new ArrayList<>();
             this.title = title;
+            String date = StringUtils.rightPad(postDate, 13, "0");
+            this.postDate = new Date(Long.parseLong(date));
         }
 
     public int getPostType() {
@@ -39,11 +42,23 @@ public class Post {
         return 0;
     }
 
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
+    }
+
     public int getCommentsSize(){
         return this.comments.size();
     }
 
     public Comment getLastComment() {
+        if(this.comments.size() == 0) {
+            User user = new User(
+                    "",
+                    "",
+                    ""
+            );
+            return new Comment(user, "Sem comentários", "1234567891");
+        }
         return this.comments.get(this.comments.size()-1);
     }
 }
