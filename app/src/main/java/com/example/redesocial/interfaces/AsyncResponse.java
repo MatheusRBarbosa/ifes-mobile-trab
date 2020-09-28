@@ -1,4 +1,4 @@
-package com.example.redesocial.services;
+package com.example.redesocial.interfaces;
 
 public interface AsyncResponse {
     void authenticate(String login, String token);

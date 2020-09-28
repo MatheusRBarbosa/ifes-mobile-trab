@@ -14,24 +14,34 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.redesocial.Utils.MarginItemDecoration;
+import com.example.redesocial.interfaces.AsyncList;
 import com.example.redesocial.models.Comment;
+import com.example.redesocial.services.Api;
 import com.example.redesocial.services.Mock;
 import com.example.redesocial.services.SessionManager;
 import com.example.redesocial.ui.comments.CommentsAdapter;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class CommentsActivity extends AppCompatActivity {
-
-    //SessionManager sessionManager;
+    Api api;
+    String userToken;
+    String userLogin;
+    final List<Comment> comments = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comments);
 
-        //sessionManager = new SessionManager(CommentsActivity.this);
+        // Create session
+        final HashMap<String, String> loggedUser = SessionManager.getUserDetail(CommentsActivity.this);
+        this.userToken = loggedUser.get("token");
+        this.userLogin = loggedUser.get("login");
 
+        this.api = new Api(getApplicationContext());
 
         // Setting up top menu
         Toolbar toolbar = findViewById(R.id.menu_top);
@@ -43,16 +53,29 @@ public class CommentsActivity extends AppCompatActivity {
 
         //Setting up adapter
         Intent i = getIntent();
-        int postId = i.getIntExtra("postId", 0);
-        List<Comment> commentList = Mock.getComments(postId); //TODO: Pegar da API
-        CommentsAdapter commentsAdapter = new CommentsAdapter(this, commentList);
+        final int postId = i.getIntExtra("postId", 0);
+        comments.addAll(api.getComements(postId));
+
+        System.out.println("COMENTARIO TEXTO");
+        //System.out.println(commentList.get(0).text);
+        System.out.println(comments.size());
+
+        //CommentsAdapter commentsAdapter = new CommentsAdapter(this, comments);
 
         // Setting up recycleview
-        final RecyclerView rvComments = (RecyclerView) findViewById(R.id.rv_comments);
+        final RecyclerView rvComments = findViewById(R.id.rv_comments);
         rvComments.setLayoutManager(new LinearLayoutManager(CommentsActivity.this));
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.post_spacing);
         rvComments.addItemDecoration(new MarginItemDecoration(spacingInPixels));
-        rvComments.setAdapter(commentsAdapter);
+
+        this.api.setListResponse(new AsyncList<Comment>() {
+            @Override
+            public void retrieve(List<Comment> list) {
+                comments.addAll(list);
+                CommentsAdapter commentsAdapter = new CommentsAdapter(CommentsActivity.this, comments);
+                rvComments.setAdapter(commentsAdapter);
+            }
+        });
 
         // Setting up send_comment
         final EditText etComment = findViewById(R.id.send_comment);
@@ -67,13 +90,9 @@ public class CommentsActivity extends AppCompatActivity {
         btnSendComment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //TODO: Mandar post para API
-                Toast toast = Toast.makeText(
-                        CommentsActivity.this,
-                        etComment.getText(),
-                        Toast.LENGTH_SHORT
-                );
-                toast.show();
+                String comment = etComment.getText().toString();
+                api.postComment(userLogin, userToken, postId, comment);
+                CommentsActivity.this.finish();
             }
         });
     }

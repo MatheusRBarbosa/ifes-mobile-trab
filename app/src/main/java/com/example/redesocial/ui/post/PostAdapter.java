@@ -106,7 +106,6 @@ public class PostAdapter extends RecyclerView.Adapter {
             @Override
             public void onClick(View view) {
                 Intent i = new Intent(view.getContext(), CommentsActivity.class);
-                Bundle bundle = new Bundle();
                 i.putExtra("postId", post.id);
                 view.getContext().startActivity(i);
             }

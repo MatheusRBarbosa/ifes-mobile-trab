@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 
 import com.example.redesocial.services.Api;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -64,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
         this.api = new Api(getApplicationContext());
 
         // Setting posts data
-        //posts = Mock.getAllPosts(); //TODO: Consumir dados da API
         posts = api.getPosts(this.userLogin, this.userToken, 0);
 
 
@@ -88,8 +88,6 @@ public class MainActivity extends AppCompatActivity {
         // Setting up bottom menu
         this.bottomNavigationView = findViewById(R.id.menu_bottom);
 
-        //this.bottomNavigationView.setSelectedItemId(R.id.op_everybody); //TODO: BUG - Isso deveria fazer com que quando
-                                                                          //TODO: voltasse da tela de login o app nao fechasse, abrisse na aba geral
         this.bottomNavigationView.setOnNavigationItemSelectedListener(
                 new BottomNavigationView.OnNavigationItemSelectedListener() {
                     @Override
@@ -138,6 +136,9 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
+
+        //View view = this.bottomNavigationView.findViewById(R.id.op_everybody);
+        //view.performClick();
     }
 
     @Override

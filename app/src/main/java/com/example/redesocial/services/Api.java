@@ -7,6 +7,8 @@ import android.widget.Toast;
 import com.example.redesocial.Utils.Const;
 import com.example.redesocial.Utils.Holder;
 import com.example.redesocial.Utils.Streams;
+import com.example.redesocial.interfaces.AsyncResponse;
+import com.example.redesocial.interfaces.AsyncList;
 import com.example.redesocial.models.Comment;
 import com.example.redesocial.models.Post;
 import com.example.redesocial.models.PostImage;
@@ -22,13 +24,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Api {
 
     Context context;
     AsyncResponse response;
+    AsyncList listResponse = null;
 
     public Api(Context context) {
         this.context = context;
@@ -38,6 +40,10 @@ public class Api {
     public Api(Context context, AsyncResponse response) {
         this.context = context;
         this.response = response;
+    }
+
+    public void setListResponse(AsyncList listResponse) {
+        this.listResponse = listResponse;
     }
 
     public void postLogin(String login, String password, String token) {
@@ -263,6 +269,7 @@ public class Api {
 
                 try {
                     InputStream is = http.execute();
+                    System.out.println("Executing request");
                     String result = Streams.inputStream2String(is);
                     http.finish();
 
@@ -281,9 +288,9 @@ public class Api {
                     int status = json.getInt("status");
                     if(status == Const.SUCCESS) {
                         JSONArray list = json.getJSONArray("comentarios");
+                        System.out.println("OnPost Execute");
                         for (int i = 0; i < list.length(); i++) {
                             JSONObject object = list.getJSONObject(i);
-
                             // User
                             String userPhoto = Const.apiUrl(object.getString("foto_usuario"));
                             User user = new User(
@@ -301,13 +308,62 @@ public class Api {
                             comments.add(comment);
                         }
                     }
-
+                    if(listResponse != null) {
+                        System.out.println("List response NOT NULL!!");
+                        listResponse.retrieve(comments);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }.execute(""+postId);
-
+        System.out.println("Retriving data");
         return comments;
+    }
+
+    public void postComment(String login, String token, int postId, String comment) {
+        final String apiUrl = Const.apiUrl("comentar.php");
+
+        new AsyncTask<String, Void, JSONObject>() {
+            HttpRequest http = new HttpRequest(apiUrl, "POST");
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                http.addParam("login", strings[0]);
+                http.addParam("token", strings[1]);
+                http.addParam("idpost", strings[2]);
+                http.addParam("comentario", strings[3]);
+
+                try {
+                    InputStream is = http.execute();
+                    String result = Streams.inputStream2String(is);
+                    http.finish();
+
+                    return new JSONObject(result);
+                }
+                catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject json) {
+                try {
+                    http.handleResult(context, json);
+                    int status = json.getInt("status");
+                    if(status == Const.SUCCESS) {
+                        String message = "Comentário criado com sucesso!";
+                        if(!json.getString("message").isEmpty()) {
+                            message = json.getString("message");
+                        }
+                        Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(login, token, postId+"", comment);
     }
 }
