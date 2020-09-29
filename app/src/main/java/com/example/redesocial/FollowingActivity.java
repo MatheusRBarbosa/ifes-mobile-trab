@@ -86,6 +86,7 @@ public class FollowingActivity extends AppCompatActivity {
                     public boolean onQueryTextSubmit(String query) {
                         Intent i = new Intent(FollowingActivity.this, FindUsersActivity.class);
                         i.putExtra("login", userLogin);
+                        i.putExtra("token", userToken);
                         i.putExtra("search", query);
                         startActivity(i);
                         return true;

@@ -70,8 +70,8 @@ public class User {
     }
 
     public void setBirthDate(String birthDate){
-        String date = StringUtils.rightPad(birthDate, 13, "0");
-        //System.out.println(date);
+        String date = StringUtils.rightPad(birthDate, birthDate.length(), "0");
         this.birthDate = new Date(Long.parseLong(date));
     }
+
 }

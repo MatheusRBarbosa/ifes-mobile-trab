@@ -22,7 +22,8 @@ import java.util.List;
 
 public class FindUsersActivity extends AppCompatActivity {
 
-    private String userLogin;
+    String userLogin;
+    String userToken;
     Api api;
 
     @Override
@@ -32,6 +33,7 @@ public class FindUsersActivity extends AppCompatActivity {
 
         Intent i = getIntent();
         this.userLogin = i.getStringExtra("login");
+        this.userToken = i.getStringExtra("token");
         String search = i.getStringExtra("search");
 
         this.api = new Api(getApplicationContext());
@@ -57,7 +59,7 @@ public class FindUsersActivity extends AppCompatActivity {
             @Override
             public void retrieve(List<User> list) {
                 users.addAll(list);
-                FindUsersAdapter findUsersAdapter = new FindUsersAdapter(FindUsersActivity.this, users, userLogin);
+                FindUsersAdapter findUsersAdapter = new FindUsersAdapter(FindUsersActivity.this, users, userLogin, userToken);
                 rvComments.setAdapter(findUsersAdapter);
             }
         });

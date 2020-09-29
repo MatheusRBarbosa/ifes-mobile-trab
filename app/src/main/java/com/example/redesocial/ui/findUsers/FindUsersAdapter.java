@@ -16,7 +16,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.redesocial.FindUsersActivity;
 import com.example.redesocial.R;
+import com.example.redesocial.Utils.Const;
 import com.example.redesocial.models.User;
+import com.example.redesocial.services.Api;
 import com.example.redesocial.services.Mock;
 
 import java.text.ParseException;
@@ -25,12 +27,16 @@ import java.util.List;
 public class FindUsersAdapter extends RecyclerView.Adapter {
     List<User> following;
     String login;
+    String token;
     FindUsersActivity findUsersActivity;
+    Api api;
 
-    public FindUsersAdapter(FindUsersActivity findUsersActivity, List<User> following, String login){
+    public FindUsersAdapter(FindUsersActivity findUsersActivity, List<User> following, String login, String token){
         this.findUsersActivity = findUsersActivity;
         this.following = following;
         this.login = login;
+        this.token = token;
+        this.api = new Api(findUsersActivity.getApplicationContext());
     }
 
     @NonNull
@@ -44,8 +50,6 @@ public class FindUsersAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         final User user = this.following.get(position);
-        boolean isFollowing = false;
-        final boolean finalIsFollowing;
 
         if(!user.login.equals(this.login)) {
             // RequestOptions to use when load image is needed
@@ -78,49 +82,26 @@ public class FindUsersAdapter extends RecyclerView.Adapter {
             // Button behavior controller
             Button btnUnFollow = holder.itemView.findViewById(R.id.btn_follow);
 
-            /*
-            if(!this.user.following.contains(user)){
-                isFollowing = false;
-                btnUnFollow.setBackgroundResource(R.drawable.ic_follow);
+            // Set button icon
+            if(user.getIsFollowing() == Const.isFollowing) {
+                btnUnFollow.setBackgroundResource(R.drawable.ic_clear);
             }
-            else{
-                isFollowing = true;
-            }
-            */
-
-
-            for(User following: this.following) {
-                if(following.equals(this.login)){
-                    isFollowing = true;
-                    break;
-                }
-            }
-
-            if(!isFollowing){
+            else {
                 btnUnFollow.setBackgroundResource(R.drawable.ic_follow);
             }
 
-            finalIsFollowing = isFollowing;
-
+            // Follow logic
             btnUnFollow.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    String message;
-                    if(finalIsFollowing){
+                    if(user.getIsFollowing() == Const.isNotFollowing){
                         view.setBackgroundResource(R.drawable.ic_follow);
-                        message = "Deixando de seguir " + user.name;
+                        api.postFollow(login, token, user.login);
                     }
                     else{
                         view.setBackgroundResource(R.drawable.ic_clear);
-                        message = "Seguindo " + user.name;
                     }
-                    //TODO: Mandar post para API
-                    Toast toast = Toast.makeText(
-                            findUsersActivity.getApplicationContext(),
-                            message,
-                            Toast.LENGTH_SHORT
-                    );
-                    toast.show();
+
                 }
             });
         }

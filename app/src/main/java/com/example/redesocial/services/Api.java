@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.example.redesocial.Utils.Const;
+import com.example.redesocial.Utils.DateHandler;
 import com.example.redesocial.Utils.Holder;
 import com.example.redesocial.Utils.Streams;
 import com.example.redesocial.interfaces.AsyncResponse;
@@ -173,7 +174,7 @@ public class Api {
                         for (int i = 0; i < list.length(); i++) {
                             JSONObject object = list.getJSONObject(i);
                             // User
-                            String userPhoto = Const.apiUrl(object.getString("foto_usuario"));
+                            String userPhoto = Const.apiUrl(object.getString("foto"));
                             User user = new User(
                                     "",
                                     object.getString("nome"),
@@ -415,21 +416,66 @@ public class Api {
                                     userPhoto
                             );
                             user.setIsFollowing(object.getInt("seguindo"));
-                            String bd = object.getString("data_nascimento");
-                            System.out.println(bd);
-                            user.setBirthDate(object.getString("data_nascimento"));
-
+                            JSONObject birtdate = object.getJSONObject("data_nascimento");
+                            String millis = "" + DateHandler.convertToLong(birtdate.getString("date"), "yyyy-MM-dd HH:mm:ss");
+                            user.setBirthDate(millis);
+                            user.city = object.getString("cidade");
                             users.add(user);
                         }
                     }
                     if(listResponse != null) {
                         listResponse.retrieve(users);
                     }
-                } catch (JSONException e) {
+                } catch (JSONException | ParseException e) {
                     e.printStackTrace();
                 }
             }
         }.execute(login, search);
         return users;
+    }
+
+    public void postFollow(String login, String token, String following) {
+        final String apiUrl = Const.apiUrl("seguir.php");
+
+        new AsyncTask<String, Void, JSONObject>() {
+            HttpRequest http = new HttpRequest(apiUrl, "POST");
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                http.addParam("login", strings[0]);
+                http.addParam("token", strings[1]);
+                http.addParam("quem", strings[2]);
+
+                try {
+                    InputStream is = http.execute();
+                    String result = Streams.inputStream2String(is);
+                    http.finish();
+
+                    return new JSONObject(result);
+                }
+                catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject json) {
+                try {
+                    http.handleResult(context, json);
+                    int status = json.getInt("status");
+                    if(status == Const.SUCCESS) {
+                        String message = "Comentário criado com sucesso!";
+                        if(!json.getString("message").isEmpty()) {
+                            message = json.getString("message");
+                        }
+                        Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(login, token, following);
     }
 }
