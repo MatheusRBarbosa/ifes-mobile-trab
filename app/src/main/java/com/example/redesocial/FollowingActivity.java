@@ -5,36 +5,47 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.SearchEvent;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.redesocial.Utils.MarginItemDecoration;
+import com.example.redesocial.models.Comment;
 import com.example.redesocial.models.User;
+import com.example.redesocial.services.Api;
 import com.example.redesocial.services.Mock;
 import com.example.redesocial.services.SessionManager;
 import com.example.redesocial.ui.following.FollowingAdapter;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FollowingActivity extends AppCompatActivity {
 
-    private int userId;
-    //SessionManager sessionManager;
+    String userToken;
+    String userLogin;
+    Api api;
+    final List<User> follwing = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_following);
 
-        //sessionManager = new SessionManager(FollowingActivity.this);
-        SessionManager.checkLogin(FollowingActivity.this);
-
+        // Create session
         final HashMap<String, String> loggedUser = SessionManager.getUserDetail(FollowingActivity.this);
+        this.userToken = loggedUser.get("token");
+        this.userLogin = loggedUser.get("login");
+
+        this.api = new Api(getApplicationContext());
 
         // Setting up action bar
         Toolbar toolbar = findViewById(R.id.menu_top);
@@ -45,10 +56,9 @@ public class FollowingActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         //Setting up adapter
-        Intent i = getIntent();
-        this.userId = Integer.parseInt(loggedUser.get("ID"));
-        User user = Mock.getUser(this.userId); //TODO: Pegar da API
-        FollowingAdapter followingAdapter = new FollowingAdapter(this, user.following);
+        this.follwing.addAll(api.getFollowing(userLogin, userToken));
+
+        FollowingAdapter followingAdapter = new FollowingAdapter(this, this.follwing);
 
         // Setting up recycleview
         final RecyclerView rvComments = (RecyclerView) findViewById(R.id.rv_following);
@@ -70,9 +80,22 @@ public class FollowingActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
         switch (item.getItemId()) {
             case R.id.op_search:
-                Intent i = new Intent(FollowingActivity.this, FindUsersActivity.class);
-                i.putExtra("userId", this.userId);
-                startActivity(i);
+                SearchView searchView = (SearchView) item.getActionView();
+                searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+                    @Override
+                    public boolean onQueryTextSubmit(String query) {
+                        Intent i = new Intent(FollowingActivity.this, FindUsersActivity.class);
+                        i.putExtra("login", userLogin);
+                        i.putExtra("search", query);
+                        startActivity(i);
+                        return true;
+                    }
+
+                    @Override
+                    public boolean onQueryTextChange(String newText) {
+                        return false;
+                    }
+                });
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -100,13 +100,8 @@ public class MainActivity extends AppCompatActivity {
                             case R.id.op_my_world:
                                 SessionManager.checkLogin(MainActivity.this);
                                 //List<User> following = user.getFollowing();
-                                JSONObject response = api.getFollowing(userLogin, userToken);
+                                List<User> response = api.getFollowing(userLogin, userToken);
                                 JSONArray following = null;
-                                try {
-                                    following = response.getJSONArray("seguindo");
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
 
                                 for(Post post: posts) {
                                     String fLogin = "";

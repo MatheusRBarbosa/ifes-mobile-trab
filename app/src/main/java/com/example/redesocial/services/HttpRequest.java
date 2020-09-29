@@ -4,9 +4,11 @@ import android.content.Context;
 import android.widget.Toast;
 
 import com.example.redesocial.Utils.Const;
+import com.google.android.gms.common.util.JsonUtils;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.ls.LSOutput;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -218,7 +220,7 @@ public class HttpRequest {
             responseText = status + " - " + messege;
         }
 
-        if(!messege.equals("sem comentarios")) {
+        if(!messege.equals("sem comentarios") && status != Const.SUCCESS) {
             Toast toast = Toast.makeText(context, responseText, Toast.LENGTH_LONG);
             toast.show();
         }

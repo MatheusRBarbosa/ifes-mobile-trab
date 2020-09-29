@@ -140,9 +140,9 @@ public class Api {
         }.execute(login, token, text, imgPath);
     }
 
-    public JSONObject getFollowing(String login, String token) {
+    public List<User> getFollowing(String login, String token) {
         final String apiUrl = Const.apiUrl("pegar_seguindo.php");
-        final Holder<JSONObject> response = new Holder();
+        final List<User> users = new ArrayList<>();
 
         new AsyncTask<String, Void, JSONObject>() {
             HttpRequest http = new HttpRequest(apiUrl, "GET");
@@ -155,7 +155,6 @@ public class Api {
                     InputStream is = http.execute();
                     String result = Streams.inputStream2String(is);
                     http.finish();
-
                     return new JSONObject(result);
                 }
                 catch (IOException | JSONException e) {
@@ -170,16 +169,29 @@ public class Api {
                     http.handleResult(context, json);
                     int status = json.getInt("status");
                     if(status == Const.SUCCESS) {
-                        response.set(json);
-                    }
+                        JSONArray list = json.getJSONArray("seguindo");
+                        for (int i = 0; i < list.length(); i++) {
+                            JSONObject object = list.getJSONObject(i);
+                            // User
+                            String userPhoto = Const.apiUrl(object.getString("foto_usuario"));
+                            User user = new User(
+                                    "",
+                                    object.getString("nome"),
+                                    userPhoto
+                            );
 
+                            users.add(user);
+                        }
+                    }
+                    if(listResponse != null) {
+                        listResponse.retrieve(users);
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
             }
         }.execute(login, token);
-
-        return response.get();
+        return users;
     }
 
     public List<Post> getPosts(String login, String token, int scope) {
@@ -269,7 +281,6 @@ public class Api {
 
                 try {
                     InputStream is = http.execute();
-                    System.out.println("Executing request");
                     String result = Streams.inputStream2String(is);
                     http.finish();
 
@@ -288,7 +299,6 @@ public class Api {
                     int status = json.getInt("status");
                     if(status == Const.SUCCESS) {
                         JSONArray list = json.getJSONArray("comentarios");
-                        System.out.println("OnPost Execute");
                         for (int i = 0; i < list.length(); i++) {
                             JSONObject object = list.getJSONObject(i);
                             // User
@@ -309,7 +319,6 @@ public class Api {
                         }
                     }
                     if(listResponse != null) {
-                        System.out.println("List response NOT NULL!!");
                         listResponse.retrieve(comments);
                     }
                 } catch (JSONException e) {
@@ -317,7 +326,6 @@ public class Api {
                 }
             }
         }.execute(""+postId);
-        System.out.println("Retriving data");
         return comments;
     }
 
@@ -365,5 +373,63 @@ public class Api {
                 }
             }
         }.execute(login, token, postId+"", comment);
+    }
+
+    public List<User> getFindUsers(String login, String search) {
+        final String apiUrl = Const.apiUrl("buscar_usuario.php");
+        final List<User> users = new ArrayList<>();
+
+        new AsyncTask<String, Void, JSONObject>() {
+            HttpRequest http = new HttpRequest(apiUrl, "GET");
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                http.addParam("login", strings[0]);
+                http.addParam("busca", strings[1]);
+
+                try {
+                    InputStream is = http.execute();
+                    String result = Streams.inputStream2String(is);
+                    http.finish();
+                    return new JSONObject(result);
+                }
+                catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject json) {
+                try {
+                    http.handleResult(context, json);
+                    int status = json.getInt("status");
+                    if(status == Const.SUCCESS) {
+                        JSONArray list = json.getJSONArray("usuarios");
+                        for (int i = 0; i < list.length(); i++) {
+                            JSONObject object = list.getJSONObject(i);
+                            // User
+                            String userPhoto = Const.apiUrl(object.getString("foto"));
+                            User user = new User(
+                                    object.getString("login"),
+                                    object.getString("nome"),
+                                    userPhoto
+                            );
+                            user.setIsFollowing(object.getInt("seguindo"));
+                            String bd = object.getString("data_nascimento");
+                            System.out.println(bd);
+                            user.setBirthDate(object.getString("data_nascimento"));
+
+                            users.add(user);
+                        }
+                    }
+                    if(listResponse != null) {
+                        listResponse.retrieve(users);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(login, search);
+        return users;
     }
 }

@@ -10,15 +10,20 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.redesocial.Utils.MarginItemDecoration;
+import com.example.redesocial.interfaces.AsyncList;
+import com.example.redesocial.models.Comment;
 import com.example.redesocial.models.User;
+import com.example.redesocial.services.Api;
 import com.example.redesocial.services.Mock;
+import com.example.redesocial.ui.comments.CommentsAdapter;
 import com.example.redesocial.ui.findUsers.FindUsersAdapter;
 
 import java.util.List;
 
 public class FindUsersActivity extends AppCompatActivity {
 
-    private int userId;
+    private String userLogin;
+    Api api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,7 +31,10 @@ public class FindUsersActivity extends AppCompatActivity {
         setContentView(R.layout.activity_find_users);
 
         Intent i = getIntent();
-        this.userId = i.getIntExtra("userId", 0);
+        this.userLogin = i.getStringExtra("login");
+        String search = i.getStringExtra("search");
+
+        this.api = new Api(getApplicationContext());
 
         // Setting up action bar
         Toolbar toolbar = findViewById(R.id.menu_top);
@@ -37,14 +45,21 @@ public class FindUsersActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         //Setting up adapter
-        List<User> users = Mock.getUsers(); //TODO: Pegar da API
-        FindUsersAdapter findUsersAdapter = new FindUsersAdapter(this, users, this.userId);
+        final List<User> users = this.api.getFindUsers(userLogin, search);
 
         // Setting up recycleview
         final RecyclerView rvComments = (RecyclerView) findViewById(R.id.rv_new_users);
         rvComments.setLayoutManager(new LinearLayoutManager(FindUsersActivity.this));
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.post_spacing);
         rvComments.addItemDecoration(new MarginItemDecoration(spacingInPixels));
-        rvComments.setAdapter(findUsersAdapter);
+
+        this.api.setListResponse(new AsyncList<User>() {
+            @Override
+            public void retrieve(List<User> list) {
+                users.addAll(list);
+                FindUsersAdapter findUsersAdapter = new FindUsersAdapter(FindUsersActivity.this, users, userLogin);
+                rvComments.setAdapter(findUsersAdapter);
+            }
+        });
     }
 }

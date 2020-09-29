@@ -5,5 +5,7 @@
         android:id="@+id/op_search"
         android:icon="@drawable/ic_search"
         android:title="Procurar novas pessoas"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="ifRoom|collapseActionView"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        />
 </menu>

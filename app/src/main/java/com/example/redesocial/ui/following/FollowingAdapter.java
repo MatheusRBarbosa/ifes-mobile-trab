@@ -24,7 +24,7 @@ public class FollowingAdapter extends RecyclerView.Adapter{
     private FollowingActivity followingActivity;
     private List<User> users;
 
-    public FollowingAdapter(FollowingActivity followingActivity, List<User> users){
+    public FollowingAdapter(FollowingActivity followingActivity, List<User> users) {
         this.users = users;
         this.followingActivity = followingActivity;
     }

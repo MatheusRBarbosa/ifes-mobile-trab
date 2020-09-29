@@ -23,16 +23,14 @@ import java.text.ParseException;
 import java.util.List;
 
 public class FindUsersAdapter extends RecyclerView.Adapter {
-    List<User> users;
-    User user;
+    List<User> following;
     String login;
     FindUsersActivity findUsersActivity;
 
-    public FindUsersAdapter(FindUsersActivity findUsersActivity, List<User> users, int userId){
+    public FindUsersAdapter(FindUsersActivity findUsersActivity, List<User> following, String login){
         this.findUsersActivity = findUsersActivity;
-        this.users = users;
-        this.user = Mock.getUser(userId); //TODO: Pegar da api
-        this.login = this.user.login;
+        this.following = following;
+        this.login = login;
     }
 
     @NonNull
@@ -45,7 +43,7 @@ public class FindUsersAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        final User user = this.users.get(position);
+        final User user = this.following.get(position);
         boolean isFollowing = false;
         final boolean finalIsFollowing;
 
@@ -91,7 +89,7 @@ public class FindUsersAdapter extends RecyclerView.Adapter {
             */
 
 
-            for(User following: this.user.following) {
+            for(User following: this.following) {
                 if(following.equals(this.login)){
                     isFollowing = true;
                     break;
@@ -135,6 +133,6 @@ public class FindUsersAdapter extends RecyclerView.Adapter {
 
     @Override
     public int getItemCount() {
-        return this.users.size();
+        return this.following.size();
     }
 }
