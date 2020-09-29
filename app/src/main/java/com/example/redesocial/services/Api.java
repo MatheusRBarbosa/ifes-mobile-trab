@@ -180,6 +180,10 @@ public class Api {
                                     object.getString("nome"),
                                     userPhoto
                             );
+                            String birtdate = object.getString("data_nascimento");
+                            //String millis = "" + DateHandler.convertToLong(birtdate.getString("date"), "yyyy-MM-dd HH:mm:ss");
+                            user.setBirthDate(birtdate);
+                            user.city = object.getString("cidade");
 
                             users.add(user);
                         }
@@ -450,7 +454,9 @@ public class Api {
                     String result = Streams.inputStream2String(is);
                     http.finish();
 
-                    return new JSONObject(result);
+                    JSONObject json = new JSONObject(result);
+                    json.put("login", strings[0]);
+                    return json;
                 }
                 catch (IOException | JSONException e) {
                     e.printStackTrace();
@@ -464,7 +470,54 @@ public class Api {
                     http.handleResult(context, json);
                     int status = json.getInt("status");
                     if(status == Const.SUCCESS) {
-                        String message = "Comentário criado com sucesso!";
+                        String message = "Agora você está seguindo " + json.getString("login");
+                        if(!json.getString("message").isEmpty()) {
+                            message = json.getString("message");
+                        }
+                        Toast toast = Toast.makeText(context, message, Toast.LENGTH_LONG);
+                        toast.show();
+                    }
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(login, token, following);
+    }
+
+    public void postUnFollow(String login, String token, String following) {
+        final String apiUrl = Const.apiUrl("desfazer_seguir.php");
+
+        new AsyncTask<String, Void, JSONObject>() {
+            HttpRequest http = new HttpRequest(apiUrl, "POST");
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                http.addParam("login", strings[0]);
+                http.addParam("token", strings[1]);
+                http.addParam("quem", strings[2]);
+
+                try {
+                    InputStream is = http.execute();
+                    String result = Streams.inputStream2String(is);
+                    http.finish();
+
+                    JSONObject json = new JSONObject(result);
+                    json.put("login", strings[0]);
+                    return json;
+                }
+                catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject json) {
+                try {
+                    http.handleResult(context, json);
+                    int status = json.getInt("status");
+                    if(status == Const.SUCCESS) {
+                        String message = "Você não segue mais " + json.getString("login");
                         if(!json.getString("message").isEmpty()) {
                             message = json.getString("message");
                         }

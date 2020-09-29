@@ -17,6 +17,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.redesocial.FindUsersActivity;
 import com.example.redesocial.R;
 import com.example.redesocial.Utils.Const;
+import com.example.redesocial.Utils.Layout;
 import com.example.redesocial.models.User;
 import com.example.redesocial.services.Api;
 import com.example.redesocial.services.Mock;
@@ -95,12 +96,14 @@ public class FindUsersAdapter extends RecyclerView.Adapter {
                 @Override
                 public void onClick(View view) {
                     if(user.getIsFollowing() == Const.isNotFollowing){
-                        view.setBackgroundResource(R.drawable.ic_follow);
+                        view.setBackgroundResource(R.drawable.ic_clear);
                         api.postFollow(login, token, user.login);
                     }
                     else{
-                        view.setBackgroundResource(R.drawable.ic_clear);
+                        view.setBackgroundResource(R.drawable.ic_follow);
+                        api.postUnFollow(login, token, user.login);
                     }
+                    //Layout.changeFollowIconOnClick(view);
 
                 }
             });

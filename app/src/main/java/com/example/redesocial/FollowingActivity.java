@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.redesocial.Utils.MarginItemDecoration;
+import com.example.redesocial.interfaces.AsyncList;
 import com.example.redesocial.models.Comment;
 import com.example.redesocial.models.User;
 import com.example.redesocial.services.Api;
@@ -58,14 +59,20 @@ public class FollowingActivity extends AppCompatActivity {
         //Setting up adapter
         this.follwing.addAll(api.getFollowing(userLogin, userToken));
 
-        FollowingAdapter followingAdapter = new FollowingAdapter(this, this.follwing);
-
         // Setting up recycleview
         final RecyclerView rvComments = (RecyclerView) findViewById(R.id.rv_following);
         rvComments.setLayoutManager(new LinearLayoutManager(FollowingActivity.this));
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.post_spacing);
         rvComments.addItemDecoration(new MarginItemDecoration(spacingInPixels));
-        rvComments.setAdapter(followingAdapter);
+
+        this.api.setListResponse(new AsyncList<User>() {
+            @Override
+            public void retrieve(List<User> list) {
+                follwing.addAll(list);
+                FollowingAdapter followingAdapter = new FollowingAdapter(FollowingActivity.this, follwing);
+                rvComments.setAdapter(followingAdapter);
+            }
+        });
     }
 
     @Override
