@@ -175,17 +175,18 @@ public class Api {
                             JSONObject object = list.getJSONObject(i);
                             // User
                             String userPhoto = Const.apiUrl(object.getString("foto"));
+                            String login =  object.getString("login");
                             User user = new User(
-                                    "",
+                                    login,
                                     object.getString("nome"),
                                     userPhoto
                             );
-                            String birtdate = object.getString("data_nascimento");
-                            //String millis = "" + DateHandler.convertToLong(birtdate.getString("date"), "yyyy-MM-dd HH:mm:ss");
-                            user.setBirthDate(birtdate);
-                            user.city = object.getString("cidade");
-
-                            users.add(user);
+                            if(!login.equals("")) {
+                                String birtdate = object.getString("data_nascimento");
+                                user.setBirthDate(birtdate);
+                                user.city = object.getString("cidade");
+                                users.add(user);
+                            }
                         }
                     }
                     if(listResponse != null) {

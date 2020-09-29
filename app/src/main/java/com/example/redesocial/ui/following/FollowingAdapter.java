@@ -15,7 +15,9 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.example.redesocial.FollowingActivity;
 import com.example.redesocial.R;
+import com.example.redesocial.Utils.Const;
 import com.example.redesocial.models.User;
+import com.example.redesocial.services.Api;
 
 import java.text.ParseException;
 import java.util.List;
@@ -23,10 +25,16 @@ import java.util.List;
 public class FollowingAdapter extends RecyclerView.Adapter{
     private FollowingActivity followingActivity;
     private List<User> users;
+    String login;
+    String token;
+    Api api;
 
-    public FollowingAdapter(FollowingActivity followingActivity, List<User> users) {
+    public FollowingAdapter(FollowingActivity followingActivity, List<User> users, String userLogin, String userToken) {
         this.users = users;
         this.followingActivity = followingActivity;
+        this.login = userLogin;
+        this.token = userToken;
+        this.api = new Api(followingActivity.getApplicationContext());
     }
 
     @NonNull
@@ -38,7 +46,7 @@ public class FollowingAdapter extends RecyclerView.Adapter{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         final User user = this.users.get(position);
 
         // RequestOptions to use when load image is needed
@@ -71,14 +79,10 @@ public class FollowingAdapter extends RecyclerView.Adapter{
         btnUnFollow.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                view.setBackgroundResource(R.drawable.ic_follow);
-                //TODO: Mandar post para API
-                Toast toast = Toast.makeText(
-                        followingActivity.getApplicationContext(),
-                        "Deixando de seguir " + user.name,
-                        Toast.LENGTH_SHORT
-                );
-                toast.show();
+                view.setBackgroundResource(R.drawable.ic_clear);
+                api.postUnFollow(login, token, user.login);
+                users.remove(position);
+                FollowingAdapter.this.notifyDataSetChanged();
             }
         });
     }

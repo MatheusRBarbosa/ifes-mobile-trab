@@ -69,7 +69,7 @@ public class FollowingActivity extends AppCompatActivity {
             @Override
             public void retrieve(List<User> list) {
                 follwing.addAll(list);
-                FollowingAdapter followingAdapter = new FollowingAdapter(FollowingActivity.this, follwing);
+                FollowingAdapter followingAdapter = new FollowingAdapter(FollowingActivity.this, follwing, userLogin, userToken);
                 rvComments.setAdapter(followingAdapter);
             }
         });
