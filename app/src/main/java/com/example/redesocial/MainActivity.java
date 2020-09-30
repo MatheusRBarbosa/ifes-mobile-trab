@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         this.api = new Api(getApplicationContext());
 
         // Setting posts data
-        posts = api.getPosts(this.userLogin, this.userToken, 0);
+        posts = api.getPosts("", "",  0);
 
 
         //JSONObject response = api.getFollowing(userLogin, userToken);

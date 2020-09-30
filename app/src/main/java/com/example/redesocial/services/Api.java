@@ -208,15 +208,17 @@ public class Api {
             HttpRequest http = new HttpRequest(apiUrl, "GET");
             @Override
             protected JSONObject doInBackground(String... strings) {
-                http.addParam("login", strings[0]);
-                http.addParam("token", strings[1]);
-                http.addParam("tipo_timeline", strings[2]);
+                http.addParam("tipo_timeline", strings[0]);
+
+                if(!strings[1].isEmpty() && !strings[2].isEmpty()) {
+                    http.addParam("login", strings[1]);
+                    http.addParam("token", strings[2]);
+                }
 
                 try {
                     InputStream is = http.execute();
                     String result = Streams.inputStream2String(is);
                     http.finish();
-
                     return new JSONObject(result);
                 }
                 catch (IOException | JSONException e) {
@@ -270,7 +272,7 @@ public class Api {
                     e.printStackTrace();
                 }
             }
-        }.execute(login, token, "" + scope);
+        }.execute("" + scope, login, token);
 
         return posts;
     }
