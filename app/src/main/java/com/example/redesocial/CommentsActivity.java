@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.redesocial.Utils.MarginItemDecoration;
+import com.example.redesocial.interfaces.AsyncCommentResponse;
 import com.example.redesocial.interfaces.AsyncList;
 import com.example.redesocial.models.Comment;
 import com.example.redesocial.services.Api;
@@ -68,7 +69,7 @@ public class CommentsActivity extends AppCompatActivity {
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.post_spacing);
         rvComments.addItemDecoration(new MarginItemDecoration(spacingInPixels));
 
-        this.api.setListResponse(new AsyncList<Comment>() {
+        this.api.setCommentResponse(new AsyncCommentResponse() {
             @Override
             public void retrieve(List<Comment> list) {
                 comments.addAll(list);

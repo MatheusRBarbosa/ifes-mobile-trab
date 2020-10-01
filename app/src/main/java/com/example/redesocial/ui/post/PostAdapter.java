@@ -121,7 +121,4 @@ public class PostAdapter extends RecyclerView.Adapter {
         return this.posts.get(position).getPostType();
     }
 
-    private void sendComment(String comment){
-        Toast.makeText(mainActivity, "Comentario: " + comment, Toast.LENGTH_LONG);
-    }
 }

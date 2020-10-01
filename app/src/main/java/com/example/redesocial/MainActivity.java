@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.redesocial.interfaces.AsyncList;
 import com.example.redesocial.services.Api;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.redesocial.Utils.Dialog;
@@ -42,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     BottomNavigationView bottomNavigationView;
     List<Post> posts = new ArrayList<>();
     List<Post> filteredPosts = new ArrayList<>();
+    List<User> following = new ArrayList<>();
     Api api;
     PostAdapter postAdapter;
     Dialog dialog;
@@ -63,15 +65,22 @@ public class MainActivity extends AppCompatActivity {
         this.userLogin = loggedUser.get("login");
 
         this.api = new Api(getApplicationContext());
-
-        // Setting posts data
-        posts = api.getPosts("", "",  0);
-
-
-        //JSONObject response = api.getFollowing(userLogin, userToken);
+        following = this.api.getFollowing(userLogin, userToken);
+        this.api.setListResponse(new AsyncList<User>() {
+            @Override
+            public void retrieve(List<User> list) {
+                following.addAll(list);
+            }
+        });
 
         // Setting up Adapter
+        //TODO: Sempre que a opcao de meu mundo for selecionada, deve carregar os dados
+        //TODO: Desse jeito vai carregar um post quando for recem criado
+        //TODO: Order os posts por data de criacao, atualmente estao aleatorios
+
+        posts = api.getPosts("", "",  0);
         filteredPosts.addAll(posts);
+
         postAdapter = new PostAdapter(this, filteredPosts);
 
         // Setting up top menu
@@ -99,18 +108,12 @@ public class MainActivity extends AppCompatActivity {
                                 break;
                             case R.id.op_my_world:
                                 SessionManager.checkLogin(MainActivity.this);
-                                //List<User> following = user.getFollowing();
-                                List<User> response = api.getFollowing(userLogin, userToken);
-                                JSONArray following = null;
 
                                 for(Post post: posts) {
                                     String fLogin = "";
-                                    for(int i = 0; i < following.length(); i++) {
-                                        try {
-                                            fLogin = following.getJSONObject(i).getString("login");
-                                        } catch (JSONException e) {
-                                            e.printStackTrace();
-                                        }
+                                    for(int i = 0; i < following.size(); i++) {
+                                        fLogin = following.get(i).login;
+
                                         if(post.user.login.equals(fLogin)){
                                             filteredPosts.add(post);
                                         }
