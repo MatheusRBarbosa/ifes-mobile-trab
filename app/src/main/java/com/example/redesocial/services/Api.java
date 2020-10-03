@@ -540,4 +540,52 @@ public class Api {
             }
         }.execute(login, token, following);
     }
+
+    public List<String> getGallery(String login, String token) {
+        final String apiUrl = Const.apiUrl("pegar_galeria.php");
+        final List<String> gallery = new ArrayList<>();
+
+        new AsyncTask<String, Void, JSONObject>() {
+            HttpRequest http = new HttpRequest(apiUrl, "GET");
+            @Override
+            protected JSONObject doInBackground(String... strings) {
+                http.addParam("login", strings[0]);
+                http.addParam("token", strings[1]);
+
+                try {
+                    InputStream is = http.execute();
+                    String result = Streams.inputStream2String(is);
+                    http.finish();
+                    return new JSONObject(result);
+                }
+                catch (IOException | JSONException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+
+            @Override
+            protected void onPostExecute(JSONObject json) {
+                try {
+                    http.handleResult(context, json);
+                    int status = json.getInt("status");
+                    if(status == Const.SUCCESS) {
+                        JSONArray list = json.getJSONArray("fotos");
+                        for (int i = 0; i < list.length(); i++) {
+                            JSONObject object = list.getJSONObject(i);
+                            String image = object.getString("imagem");
+                            System.out.println(image);
+                            gallery.add(image);
+                        }
+                    }
+                    if(listResponse != null) {
+                        listResponse.retrieve(gallery);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        }.execute(login, token);
+        return gallery;
+    }
 }
