@@ -61,8 +61,6 @@ public class CommentsActivity extends AppCompatActivity {
         //System.out.println(commentList.get(0).text);
         System.out.println(comments.size());
 
-        //CommentsAdapter commentsAdapter = new CommentsAdapter(this, comments);
-
         // Setting up recycleview
         final RecyclerView rvComments = findViewById(R.id.rv_comments);
         rvComments.setLayoutManager(new LinearLayoutManager(CommentsActivity.this));
