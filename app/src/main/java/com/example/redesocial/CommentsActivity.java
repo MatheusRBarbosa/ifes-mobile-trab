@@ -57,12 +57,6 @@ public class CommentsActivity extends AppCompatActivity {
         final int postId = i.getIntExtra("postId", 0);
         comments.addAll(api.getComements(postId));
 
-        System.out.println("COMENTARIO TEXTO");
-        //System.out.println(commentList.get(0).text);
-        System.out.println(comments.size());
-
-        //CommentsAdapter commentsAdapter = new CommentsAdapter(this, comments);
-
         // Setting up recycleview
         final RecyclerView rvComments = findViewById(R.id.rv_comments);
         rvComments.setLayoutManager(new LinearLayoutManager(CommentsActivity.this));

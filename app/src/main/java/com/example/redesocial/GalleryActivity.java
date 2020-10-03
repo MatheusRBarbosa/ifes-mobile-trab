@@ -1,5 +1,6 @@
 package com.example.redesocial;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.appcompat.app.ActionBar;
@@ -9,38 +10,45 @@ import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.redesocial.Utils.Layout;
+import com.example.redesocial.interfaces.AsyncList;
+import com.example.redesocial.interfaces.AsyncResponse;
 import com.example.redesocial.models.Post;
+import com.example.redesocial.services.Api;
 import com.example.redesocial.services.Mock;
 import com.example.redesocial.services.SessionManager;
 import com.example.redesocial.ui.gallery.GalleryAdapter;
 
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class GalleryActivity extends AppCompatActivity {
 
-    //SessionManager sessionManager;
-    int userId;
+    String userToken;
+    String userLogin;
+    //List<String> photos = new ArrayList<>();
+    Api api;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        //sessionManager = new SessionManager(GalleryActivity.this);
         SessionManager.checkLogin(GalleryActivity.this);
 
         setContentView(R.layout.activity_gallery);
 
+        api = new Api(getApplicationContext());
+
         // Setting up user photos
         final HashMap<String, String> loggedUser = SessionManager.getUserDetail(GalleryActivity.this);
-        this.userId = Integer.parseInt(loggedUser.get("ID"));
-        List<Post> posts = null; //TODO: Pegar da API
-        try {
-            posts = Mock.getAllPostsFromUserId(this.userId);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        this.userToken = loggedUser.get("token");
+        this.userLogin = loggedUser.get("login");
+
+        System.out.println(userLogin);
+        System.out.println(userToken);
+
+        this.api.getGallery(userLogin, userToken);
 
         Toolbar toolbar = findViewById(R.id.menu_top);
         // Setting up action bar
@@ -51,14 +59,20 @@ public class GalleryActivity extends AppCompatActivity {
         actionBar.setDisplayHomeAsUpEnabled(true);
 
         // Setting up recycleView
-        GalleryAdapter galleryAdapter = new GalleryAdapter(GalleryActivity.this, posts);
 
         float w = getResources().getDimension(R.dimen.gallery_item);
         int numberOfColums = Layout.calculateNoOfColums(GalleryActivity.this, w);
-        //TODO: BUG - O espacamento esta estranho, nas esta correto.
+
         GridLayoutManager gridLayoutManager = new GridLayoutManager(GalleryActivity.this, numberOfColums);
-        RecyclerView rvGallery = findViewById(R.id.rvGallery);
-        rvGallery.setAdapter(galleryAdapter);
+        final RecyclerView rvGallery = findViewById(R.id.rvGallery);
         rvGallery.setLayoutManager(gridLayoutManager);
+
+        api.setListResponse(new AsyncList() {
+            @Override
+            public void retrieve(List list) {
+                GalleryAdapter galleryAdapter = new GalleryAdapter(GalleryActivity.this, list);
+                rvGallery.setAdapter(galleryAdapter);
+            }
+        });
     }
 }

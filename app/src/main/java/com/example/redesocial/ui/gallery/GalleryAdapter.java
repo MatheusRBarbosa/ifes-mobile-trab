@@ -20,11 +20,11 @@ import java.util.List;
 public class GalleryAdapter extends RecyclerView.Adapter {
 
     GalleryActivity galleryActivity;
-    List<Post> posts;
+    List<String> photos;
 
-    public GalleryAdapter (GalleryActivity galleryActivity, List<Post> posts){
+    public GalleryAdapter (GalleryActivity galleryActivity, List<String> photos){
         this.galleryActivity = galleryActivity;
-        this.posts = posts;
+        this.photos = photos;
     }
 
     @NonNull
@@ -37,22 +37,22 @@ public class GalleryAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Post post = this.posts.get(position);
+        String image = this.photos.get(position);
+        String imageUrl = Const.apiUrl(image);
 
-        if (post.getPostType() == Const.POST_PHOTO_TYPE){
-            // RequestOptions to use when load image is needed
-            RequestOptions glideOptions = new RequestOptions()
-                    .placeholder(R.drawable.ic_everybody)
-                    .error(R.mipmap.ic_launcher_round);
+        // RequestOptions to use when load image is needed
+        RequestOptions glideOptions = new RequestOptions()
+                .placeholder(R.drawable.ic_everybody)
+                .error(R.mipmap.ic_launcher_round);
 
-            // Loading user post photo
-            ImageView photo = holder.itemView.findViewById(R.id.gallery_item);
-            Glide.with(holder.itemView.getContext()).load(post.postImage.imageUrl).apply(glideOptions).into(photo);
-        }
+        // Loading user post photo
+        ImageView photo = holder.itemView.findViewById(R.id.gallery_item);
+        Glide.with(holder.itemView.getContext()).load(imageUrl).apply(glideOptions).into(photo);
+
     }
 
     @Override
     public int getItemCount() {
-        return this.posts.size();
+        return this.photos.size();
     }
 }
