@@ -14,6 +14,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.example.redesocial.Utils.DateHandler;
 import com.example.redesocial.interfaces.AsyncList;
 import com.example.redesocial.services.Api;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -35,6 +36,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -80,6 +84,12 @@ public class MainActivity extends AppCompatActivity {
 
         posts = api.getPosts("", "",  0);
         filteredPosts.addAll(posts);
+        Collections.sort(filteredPosts, new Comparator<Post>() {
+            @Override
+            public int compare(Post o1, Post o2) {
+                return o1.postDate.compareTo(o2.postDate);
+            }
+        });
 
         postAdapter = new PostAdapter(this, filteredPosts);
 
