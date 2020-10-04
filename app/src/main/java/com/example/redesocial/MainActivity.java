@@ -16,6 +16,7 @@ import android.view.View;
 
 import com.example.redesocial.Utils.DateHandler;
 import com.example.redesocial.interfaces.AsyncList;
+import com.example.redesocial.interfaces.AsyncPostsResponses;
 import com.example.redesocial.services.Api;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.redesocial.Utils.Dialog;
@@ -41,6 +42,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -77,21 +79,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Setting up Adapter
-        //TODO: Sempre que a opcao de meu mundo for selecionada, deve carregar os dados
-        //TODO: Desse jeito vai carregar um post quando for recem criado
-        //TODO: Order os posts por data de criacao, atualmente estao aleatorios
-
-        posts = api.getPosts("", "",  0);
-        filteredPosts.addAll(posts);
-        Collections.sort(filteredPosts, new Comparator<Post>() {
-            @Override
-            public int compare(Post o1, Post o2) {
-                return o1.postDate.compareTo(o2.postDate);
-            }
-        });
-
-        postAdapter = new PostAdapter(this, filteredPosts);
+        api.getPosts("", "",  0);
 
         // Setting up top menu
         Toolbar toolbar = findViewById(R.id.menu_top);
@@ -102,7 +90,16 @@ public class MainActivity extends AppCompatActivity {
         rvFeed.setLayoutManager(new LinearLayoutManager(MainActivity.this));
         int spacingInPixels = getResources().getDimensionPixelSize(R.dimen.post_spacing);
         rvFeed.addItemDecoration(new MarginItemDecoration(spacingInPixels));
-        rvFeed.setAdapter(postAdapter);
+
+        this.api.setPostResponse(new AsyncPostsResponses() {
+            @Override
+            public void retrieve(List<Post> list) {
+                posts = list;
+                filteredPosts.addAll(list);
+                postAdapter = new PostAdapter(MainActivity.this, filteredPosts);
+                rvFeed.setAdapter(postAdapter);
+            }
+        });
 
         // Setting up bottom menu
         this.bottomNavigationView = findViewById(R.id.menu_bottom);
@@ -144,9 +141,6 @@ public class MainActivity extends AppCompatActivity {
                     }
                 }
         );
-
-        //View view = this.bottomNavigationView.findViewById(R.id.op_everybody);
-        //view.performClick();
     }
 
     @Override
