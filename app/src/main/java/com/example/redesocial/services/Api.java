@@ -9,6 +9,7 @@ import com.example.redesocial.Utils.DateHandler;
 import com.example.redesocial.Utils.Holder;
 import com.example.redesocial.Utils.Streams;
 import com.example.redesocial.interfaces.AsyncCommentResponse;
+import com.example.redesocial.interfaces.AsyncPostsResponses;
 import com.example.redesocial.interfaces.AsyncResponse;
 import com.example.redesocial.interfaces.AsyncList;
 import com.example.redesocial.models.Comment;
@@ -34,6 +35,7 @@ public class Api {
     AsyncResponse response;
     AsyncList listResponse = null;
     AsyncCommentResponse commentResponse = null;
+    AsyncPostsResponses asyncPostsResponses = null;
 
     public Api(Context context) {
         this.context = context;
@@ -43,7 +45,7 @@ public class Api {
     public Api(Context context, AsyncResponse response) {
         this.context = context;
         this.response = response;
-    }
+}
 
     public void setListResponse(AsyncList listResponse) {
         this.listResponse = listResponse;
@@ -51,6 +53,10 @@ public class Api {
 
     public void setCommentResponse (AsyncCommentResponse asyncCommentResponse) {
         this.commentResponse = asyncCommentResponse;
+    }
+
+    public void setPostResponse(AsyncPostsResponses asyncPostResponse) {
+        this.asyncPostsResponses = asyncPostResponse;
     }
 
     public void postLogin(String login, String password, String token) {
@@ -271,6 +277,10 @@ public class Api {
                             List<Comment> comments = getComements(postId);
                             post.setComments(comments);
                             posts.add(post);
+
+                            if(asyncPostsResponses != null) {
+                                asyncPostsResponses.retrieve(posts);
+                            }
                         }
                     }
 
