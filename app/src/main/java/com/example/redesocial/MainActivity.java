@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.example.redesocial.Utils.DateHandler;
+import com.example.redesocial.Utils.Layout;
+import com.example.redesocial.Utils.SortByDate;
 import com.example.redesocial.interfaces.AsyncList;
 import com.example.redesocial.interfaces.AsyncPostsResponses;
 import com.example.redesocial.services.Api;
@@ -96,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
             public void retrieve(List<Post> list) {
                 posts = list;
                 filteredPosts.addAll(list);
+                Collections.sort(filteredPosts, new SortByDate());
                 postAdapter = new PostAdapter(MainActivity.this, filteredPosts);
                 rvFeed.setAdapter(postAdapter);
             }

@@ -6,6 +6,9 @@ import android.util.DisplayMetrics;
 import android.view.View;
 
 import com.example.redesocial.R;
+import com.example.redesocial.models.Post;
+
+import java.util.List;
 
 public class Layout {
     public static int calculateNoOfColums(Context context, float columnWidthDp) {
